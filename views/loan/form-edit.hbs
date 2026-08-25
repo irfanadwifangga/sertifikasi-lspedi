@@ -1,0 +1,140 @@
+{{!-- ======================================================================
+      HALAMAN 8 — FORM UBAH TRANSAKSI PEMINJAMAN
+      Melengkapi operasi CRUD pada tabel `loans`: di sinilah bagian UPDATE
+      dijalankan, mencakup koreksi identitas peminjam, perpanjangan jatuh
+      tempo, dan perubahan status yang ikut menyesuaikan stok buku.
+     ====================================================================== --}}
+
+<div class="row justify-content-center">
+  <div class="col-lg-9">
+
+    {{#if errors.length}}
+      <div class="alert alert-danger">
+        <div class="fw-semibold mb-2">
+          <i class="bi bi-x-octagon-fill me-1"></i> Perubahan belum dapat disimpan:
+        </div>
+        <ul class="mb-0 ps-3">
+          {{#each errors}}<li>{{this}}</li>{{/each}}
+        </ul>
+      </div>
+    {{/if}}
+
+    <div class="card">
+      <div class="card-header">
+        <span>
+          <i class="bi bi-pencil-square me-2"></i>Ubah Transaksi
+          <code>{{loan.code}}</code>
+        </span>
+        <a href="/loans/{{loan.id}}" class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-arrow-left"></i> Kembali
+        </a>
+      </div>
+
+      <div class="card-body">
+
+        {{!-- Data yang tidak dapat diubah, ditampilkan sebagai acuan --}}
+        <div class="alert alert-light border">
+          <div class="row g-3 small">
+            <div class="col-md-5">
+              <div class="text-muted text-uppercase" style="font-size:10.5px">Buku yang Dipinjam</div>
+              <div class="fw-semibold">{{loan.book.title}}</div>
+              <div class="text-muted"><code>{{loan.book.code}}</code></div>
+            </div>
+            <div class="col-md-3">
+              <div class="text-muted text-uppercase" style="font-size:10.5px">Tanggal Pinjam</div>
+              <div class="fw-semibold">{{formatDate loan.borrowedAt}}</div>
+            </div>
+            <div class="col-md-2">
+              <div class="text-muted text-uppercase" style="font-size:10.5px">Stok Buku</div>
+              <div class="fw-semibold">
+                {{loan.book.available}} / {{loan.book.stock}}
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="text-muted text-uppercase" style="font-size:10.5px">Denda Saat Ini</div>
+              <div class="fw-semibold">{{currency loan.fine}}</div>
+            </div>
+          </div>
+        </div>
+
+        <form method="POST" action="/loans/{{loan.id}}/edit">
+          <div class="row g-3">
+
+            <div class="col-md-6">
+              <label class="form-label">Nama Peminjam <span class="text-danger">*</span></label>
+              <input type="text" name="borrowerName" class="form-control" required
+                     maxlength="100" value="{{form.borrowerName}}">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Email Peminjam <span class="text-danger">*</span></label>
+              <input type="email" name="borrowerEmail" class="form-control" required
+                     maxlength="120" value="{{form.borrowerEmail}}">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Tanggal Jatuh Tempo <span class="text-danger">*</span></label>
+              <input type="date" name="dueAt" class="form-control" required
+                     value="{{form.dueAt}}">
+              <div class="form-text">
+                Majukan tanggal ini untuk memperpanjang masa pinjam. Denda
+                dihitung ulang otomatis setelah disimpan.
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Status Peminjaman <span class="text-danger">*</span></label>
+              <select name="status" class="form-select" required>
+                {{#each statuses}}
+                  <option value="{{this}}" {{#if (eq this ../form.status)}}selected{{/if}}>
+                    {{this}}
+                  </option>
+                {{/each}}
+              </select>
+              <div class="form-text">
+                Mengubah status ikut menyesuaikan stok buku.
+              </div>
+            </div>
+
+          </div>
+
+          <div class="alert alert-warning mt-4 mb-0 small">
+            <div class="fw-semibold mb-1">
+              <i class="bi bi-exclamation-triangle-fill me-1"></i>
+              Pengaruh perubahan status terhadap stok
+            </div>
+            <ul class="mb-0 ps-3">
+              <li>
+                <b>Dipinjam &rarr; Dikembalikan</b> — buku kembali ke rak, stok
+                tersedia <b>bertambah 1</b>, tanggal kembali diisi hari ini,
+                dan denda dihitung ulang.
+              </li>
+              <li>
+                <b>Dikembalikan &rarr; Dipinjam</b> — buku keluar lagi dari rak,
+                stok tersedia <b>berkurang 1</b>, tanggal kembali dikosongkan,
+                dan denda direset menjadi Rp 0. Ditolak bila stok sedang habis.
+              </li>
+            </ul>
+          </div>
+
+          <hr class="my-4">
+
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-save me-1"></i> Simpan Perubahan
+            </button>
+            <a href="/loans/{{loan.id}}" class="btn btn-outline-secondary">Batal</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="alert alert-light border mt-3 mb-0 small">
+      <i class="bi bi-shield-check text-success me-1"></i>
+      Seluruh perubahan dijalankan dalam satu <b>transaksi basis data</b>.
+      Bila salah satu langkah gagal &mdash; misalnya stok tidak mencukupi &mdash;
+      seluruh perubahan dibatalkan sehingga data tidak pernah setengah jadi.
+    </div>
+
+  </div>
+</div>

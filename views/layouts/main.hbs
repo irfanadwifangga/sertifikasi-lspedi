@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} &middot; SIPERPUS</title>
+  {{!-- Ikon tab peramban. Dideklarasikan eksplisit agar peramban tidak
+        meminta /favicon.ico yang memang tidak dilayani aplikasi. --}}
+  <link rel="icon" type="image/svg+xml" href="/aset/img/favicon.svg">
+  <link rel="stylesheet" href="/aset/vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/aset/vendor/bootstrap-icons/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/aset/css/app.css">
+</head>
+<body>
+
+  <div class="wrapper">
+
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <i class="bi bi-book-half"></i>
+        <div>
+          <div class="brand-name">SIPERPUS</div>
+          <div class="brand-sub">Peminjaman Buku</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-label">Menu Utama</div>
+
+        <a href="/" class="nav-item {{#if (eq menu 'dashboard')}}active{{/if}}">
+          <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+        <a href="/books" class="nav-item {{#if (eq menu 'books')}}active{{/if}}">
+          <i class="bi bi-journal-bookmark"></i> Data Buku
+        </a>
+        <a href="/loans" class="nav-item {{#if (eq menu 'loans')}}active{{/if}}">
+          <i class="bi bi-arrow-left-right"></i> Transaksi Peminjaman
+        </a>
+        <a href="/reports" class="nav-item {{#if (eq menu 'reports')}}active{{/if}}">
+          <i class="bi bi-file-earmark-pdf"></i> Laporan &amp; Cetak
+        </a>
+
+        <div class="nav-label">Perkakas</div>
+        <a href="http://localhost:8025" target="_blank" rel="noopener" class="nav-item">
+          <i class="bi bi-envelope-at"></i> Kotak Masuk Surel
+          <i class="bi bi-box-arrow-up-right ms-auto small"></i>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div>Pemrogram Junior (Junior Coder)</div>
+        <div>LSP Entrepreneur Digital Indonesia</div>
+      </div>
+    </aside>
+
+    <!-- ================= KONTEN ================= -->
+    <main class="content">
+
+      <header class="topbar">
+        <div>
+          <h1 class="page-title">{{title}}</h1>
+          <div class="breadcrumb-mini">
+            <i class="bi bi-house-door"></i> Beranda
+            <i class="bi bi-chevron-right"></i> {{title}}
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <a href="/loans/new" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-lg"></i> Pinjam Buku
+          </a>
+        </div>
+      </header>
+
+      <div class="page-body">
+        {{#if success}}
+          <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <i class="bi bi-info-circle-fill me-2"></i>{{success}}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {{/if}}
+
+        {{{body}}}
+      </div>
+
+      <footer class="page-footer">
+        SIPERPUS &copy; 2026 &mdash; dibangun dengan NestJS, TypeORM, dan PostgreSQL
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="/aset/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/aset/vendor/chartjs/chart.umd.js"></script>
+</body>
+</html>

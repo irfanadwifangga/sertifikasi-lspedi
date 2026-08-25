@@ -1,0 +1,112 @@
+{{!-- ======================================================================
+      HALAMAN 3 — FORM BUKU
+      Satu berkas templat dipakai untuk dua keperluan sekaligus (tambah dan
+      ubah). Perbedaannya hanya pada nilai variabel `mode` dan `action` yang
+      dikirim controller — penerapan prinsip reusability pada sisi tampilan.
+     ====================================================================== --}}
+
+<div class="row justify-content-center">
+  <div class="col-lg-9">
+
+    {{#if errors.length}}
+      <div class="alert alert-danger">
+        <div class="fw-semibold mb-2">
+          <i class="bi bi-x-octagon-fill me-1"></i> Data belum dapat disimpan:
+        </div>
+        <ul class="mb-0 ps-3">
+          {{#each errors}}<li>{{this}}</li>{{/each}}
+        </ul>
+      </div>
+    {{/if}}
+
+    <div class="card">
+      <div class="card-header">
+        <span>
+          {{#if (eq mode 'new')}}
+            <i class="bi bi-plus-circle me-2"></i>Formulir Tambah Buku
+          {{else}}
+            <i class="bi bi-pencil-square me-2"></i>Formulir Ubah Buku
+          {{/if}}
+        </span>
+        <a href="/books" class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-arrow-left"></i> Kembali
+        </a>
+      </div>
+
+      <div class="card-body">
+        <form method="POST" action="{{action}}">
+          <div class="row g-3">
+
+            <div class="col-md-4">
+              <label class="form-label">Kode Buku <span class="text-danger">*</span></label>
+              <input type="text" name="code" class="form-control" required maxlength="20"
+                     placeholder="BK-011" value="{{book.code}}">
+              <div class="form-text">Kode unik, tidak boleh sama dengan buku lain.</div>
+            </div>
+
+            <div class="col-md-8">
+              <label class="form-label">Judul Buku <span class="text-danger">*</span></label>
+              <input type="text" name="title" class="form-control" required maxlength="150"
+                     placeholder="Masukkan judul buku" value="{{book.title}}">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Pengarang <span class="text-danger">*</span></label>
+              <input type="text" name="author" class="form-control" required maxlength="100"
+                     placeholder="Nama pengarang" value="{{book.author}}">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Penerbit</label>
+              <input type="text" name="publisher" class="form-control" maxlength="100"
+                     placeholder="Nama penerbit" value="{{book.publisher}}">
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Tahun Terbit <span class="text-danger">*</span></label>
+              <input type="number" name="publishedYear" class="form-control" required
+                     min="1900" max="2100" value="{{book.publishedYear}}">
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Kategori <span class="text-danger">*</span></label>
+              <select name="category" class="form-select" required>
+                {{#each categories}}
+                  <option value="{{this}}" {{#if (eq this ../book.category)}}selected{{/if}}>
+                    {{this}}
+                  </option>
+                {{/each}}
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Jumlah Stok <span class="text-danger">*</span></label>
+              <input type="number" name="stock" class="form-control" required min="1"
+                     value="{{book.stock}}">
+              <div class="form-text">Total eksemplar yang dimiliki perpustakaan.</div>
+            </div>
+
+          </div>
+
+          <hr class="my-4">
+
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-save me-1"></i>
+              {{#if (eq mode 'new')}}Simpan Buku{{else}}Simpan Perubahan{{/if}}
+            </button>
+            <a href="/books" class="btn btn-outline-secondary">Batal</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="alert alert-light border mt-3 mb-0 small">
+      <i class="bi bi-shield-check text-success me-1"></i>
+      Seluruh isian di atas divalidasi ulang di sisi server memakai library
+      <b>class-validator</b>, sehingga data tetap aman walaupun validasi
+      bawaan peramban dilewati.
+    </div>
+
+  </div>
+</div>

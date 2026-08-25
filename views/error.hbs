@@ -1,0 +1,41 @@
+{{!-- ======================================================================
+      HALAMAN ERROR
+      Ditampilkan oleh AllExceptionsFilter setiap kali terjadi kesalahan.
+
+      Halaman ini ditujukan untuk PENGGUNA AKHIR, sehingga isinya dijaga tetap
+      ringkas dan berbahasa Indonesia. Rincian teknis (metode, URL, dan stack
+      trace) sengaja tidak ditampilkan di sini, melainkan hanya dicatat ke log
+      server — sebab pesan error mentah dapat membocorkan detail internal
+      sistem sekaligus membingungkan pengguna.
+     ====================================================================== --}}
+
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-body text-center py-5">
+
+        <i class="bi bi-exclamation-octagon text-danger" style="font-size:56px"></i>
+
+        <div class="text-muted small mt-3">Kode {{status}}</div>
+        <h2 class="mt-1 mb-2 fw-bold">{{heading}}</h2>
+        <p class="text-muted mb-1">{{message}}</p>
+
+        {{#if path}}
+          <p class="text-muted small mb-4">
+            Alamat yang diminta: <code>{{path}}</code>
+          </p>
+        {{/if}}
+
+        <div class="d-flex gap-2 justify-content-center">
+          <a href="/" class="btn btn-primary">
+            <i class="bi bi-house-door me-1"></i> Kembali ke Dashboard
+          </a>
+          <a href="javascript:history.back()" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Halaman Sebelumnya
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

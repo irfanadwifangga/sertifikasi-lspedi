@@ -1,0 +1,76 @@
+# ============================================================================
+#  SIPERPUS - Sistem Informasi Peminjaman Buku
+#  Tugas Praktik Demonstrasi - LSP EDI, Skema Pemrogram Muda
+#
+#  Menjalankan:  docker compose up --build
+#  Aplikasi   :  http://localhost          (via web server Nginx)
+#  Inbox email:  http://localhost:8025     (Mailpit)
+# ============================================================================
+
+services:
+  # --- Web Server (reverse proxy) -------------------------------------------
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: siperpus-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+    restart: unless-stopped
+
+  # --- Aplikasi (NestJS) ----------------------------------------------------
+  app:
+    build: .
+    container_name: siperpus-app
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: siperpus
+      DB_PASS: siperpus
+      DB_NAME: siperpus
+      MAIL_HOST: mailpit
+      MAIL_PORT: 1025
+      MAIL_FROM: "SIPERPUS <no-reply@siperpus.local>"
+      DENDA_PER_HARI: 1000
+      LAMA_PINJAM_HARI: 7
+    depends_on:
+      db:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    restart: unless-stopped
+
+  # --- Database Server (PostgreSQL) -----------------------------------------
+  db:
+    image: postgres:16-alpine
+    container_name: siperpus-db
+    environment:
+      POSTGRES_USER: siperpus
+      POSTGRES_PASSWORD: siperpus
+      POSTGRES_DB: siperpus
+    ports:
+      - "5432:5432"
+    volumes:
+      - siperpus-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U siperpus -d siperpus"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  # --- SMTP Server lokal untuk demo pengiriman email ------------------------
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: siperpus-mailpit
+    ports:
+      - "8025:8025" # Web UI (inbox)
+      - "1025:1025" # SMTP
+    restart: unless-stopped
+
+volumes:
+  siperpus-data:

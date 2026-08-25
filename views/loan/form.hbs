@@ -1,0 +1,106 @@
+{{!-- ======================================================================
+      HALAMAN 5 — FORM PEMINJAMAN BUKU
+      Hanya buku dengan stok tersedia yang muncul pada daftar pilihan,
+      sehingga transaksi mustahil dibuat untuk buku yang sedang habis.
+     ====================================================================== --}}
+
+<div class="row justify-content-center">
+  <div class="col-lg-9">
+
+    {{#if errors.length}}
+      <div class="alert alert-danger">
+        <div class="fw-semibold mb-2">
+          <i class="bi bi-x-octagon-fill me-1"></i> Transaksi belum dapat diproses:
+        </div>
+        <ul class="mb-0 ps-3">
+          {{#each errors}}<li>{{this}}</li>{{/each}}
+        </ul>
+      </div>
+    {{/if}}
+
+    <div class="card">
+      <div class="card-header">
+        <span><i class="bi bi-journal-arrow-up me-2"></i>Formulir Peminjaman Buku</span>
+        <a href="/loans" class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-arrow-left"></i> Kembali
+        </a>
+      </div>
+
+      <div class="card-body">
+        {{#if books.length}}
+          <form method="POST" action="/loans">
+            <div class="row g-3">
+
+              <div class="col-md-6">
+                <label class="form-label">Nama Peminjam <span class="text-danger">*</span></label>
+                <input type="text" name="borrowerName" class="form-control" required maxlength="100"
+                       placeholder="Nama lengkap peminjam" value="{{form.borrowerName}}">
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Email Peminjam <span class="text-danger">*</span></label>
+                <input type="email" name="borrowerEmail" class="form-control" required maxlength="120"
+                       placeholder="nama@contoh.id" value="{{form.borrowerEmail}}">
+                <div class="form-text">
+                  Bukti peminjaman dikirim otomatis ke alamat ini.
+                </div>
+              </div>
+
+              <div class="col-md-8">
+                <label class="form-label">Buku yang Dipinjam <span class="text-danger">*</span></label>
+                <select name="bookId" class="form-select" required>
+                  <option value="">-- Pilih buku --</option>
+                  {{#each books}}
+                    <option value="{{this.id}}" {{#if (eq this.id ../form.bookId)}}selected{{/if}}>
+                      {{this.code}} &mdash; {{this.title}} ({{this.available}} tersedia)
+                    </option>
+                  {{/each}}
+                </select>
+                <div class="form-text">
+                  Hanya buku dengan stok tersedia yang ditampilkan.
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Lama Peminjaman <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <input type="number" name="loanDays" class="form-control" required min="1" max="60"
+                         value="{{defaultLoanDays}}">
+                  <span class="input-group-text">hari</span>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="alert alert-light border mt-4 mb-0 small">
+              <i class="bi bi-info-circle text-primary me-1"></i>
+              Keterlambatan pengembalian dikenakan denda sebesar
+              <b>{{currency finePerDay}}</b> per hari, dihitung otomatis oleh sistem
+              saat buku dikembalikan.
+            </div>
+
+            <hr class="my-4">
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-check2-circle me-1"></i> Proses Peminjaman
+              </button>
+              <a href="/loans" class="btn btn-outline-secondary">Batal</a>
+            </div>
+          </form>
+        {{else}}
+          <div class="kosong">
+            <i class="bi bi-journal-x"></i>
+            Tidak ada buku yang tersedia untuk dipinjam saat ini.
+            <div class="mt-3">
+              <a href="/books/new" class="btn btn-sm btn-primary">
+                <i class="bi bi-plus-lg"></i> Tambah Buku Baru
+              </a>
+            </div>
+          </div>
+        {{/if}}
+      </div>
+    </div>
+
+  </div>
+</div>

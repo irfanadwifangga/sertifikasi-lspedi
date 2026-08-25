@@ -1,0 +1,173 @@
+{{!-- ======================================================================
+      HALAMAN 6 — DETAIL TRANSAKSI PEMINJAMAN
+      Menampilkan seluruh atribut transaksi, data buku terkait (hasil JOIN
+      antar tabel), serta tombol aksi pengembalian dan pengiriman pengingat.
+     ====================================================================== --}}
+
+<div class="row g-3">
+
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header">
+        <span>
+          <i class="bi bi-receipt me-2"></i>Transaksi <code>{{loan.code}}</code>
+        </span>
+        <span class="badge text-bg-{{statusColor loan.displayStatus}}">{{loan.displayStatus}}</span>
+      </div>
+
+      <div class="card-body">
+        <div class="row g-4">
+
+          <div class="col-md-6">
+            <div class="text-muted small text-uppercase mb-1">Nama Peminjam</div>
+            <div class="fw-semibold">{{loan.borrowerName}}</div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="text-muted small text-uppercase mb-1">Email Peminjam</div>
+            <div class="fw-semibold">{{loan.borrowerEmail}}</div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="text-muted small text-uppercase mb-1">Tanggal Pinjam</div>
+            <div class="fw-semibold">{{formatDate loan.borrowedAt}}</div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="text-muted small text-uppercase mb-1">Jatuh Tempo</div>
+            <div class="fw-semibold">{{formatDate loan.dueAt}}</div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="text-muted small text-uppercase mb-1">Tanggal Kembali</div>
+            <div class="fw-semibold">{{formatDate loan.returnedAt}}</div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="text-muted small text-uppercase mb-1">Keterlambatan</div>
+            <div class="fw-semibold {{#if (gt loan.overdueDays 0)}}text-danger{{/if}}">
+              {{#if (gt loan.overdueDays 0)}}
+                {{loan.overdueDays}} hari
+              {{else}}
+                Tidak terlambat
+              {{/if}}
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="text-muted small text-uppercase mb-1">Denda</div>
+            <div class="fw-semibold fs-5 {{#if (gt loan.fine 0)}}text-danger{{/if}}">
+              {{currency loan.fine}}
+            </div>
+            {{#if loan.isOngoing}}
+              {{#if (gt loan.overdueDays 0)}}
+                <div class="form-text text-danger">
+                  Perkiraan denda bila dikembalikan hari ini:
+                  <b>{{currency (multiply loan.overdueDays finePerDay)}}</b>
+                </div>
+              {{/if}}
+            {{/if}}
+          </div>
+
+        </div>
+
+        <hr class="my-4">
+
+        <div class="d-flex flex-wrap gap-2">
+          {{#if loan.isOngoing}}
+            <form method="POST" action="/loans/{{loan.id}}/return"
+                  onsubmit="return confirm('Proses pengembalian untuk transaksi {{loan.code}}?');">
+              <button type="submit" class="btn btn-success">
+                <i class="bi bi-box-arrow-in-down me-1"></i> Proses Pengembalian
+              </button>
+            </form>
+
+            <form method="POST" action="/loans/{{loan.id}}/remind">
+              <button type="submit" class="btn btn-outline-warning">
+                <i class="bi bi-envelope me-1"></i> Kirim Surel Pengingat
+              </button>
+            </form>
+
+            {{#if (gt loan.overdueDays 0)}}
+              <div class="alert alert-danger mb-0 py-2 px-3">
+                <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                Buku <b>{{loan.book.title}}</b> terlambat dikembalikan
+                {{loan.overdueDays}} hari.
+              </div>
+            {{else}}
+              <div class="alert alert-warning mb-0 py-2 px-3">
+                <i class="bi bi-hourglass-split me-1"></i>
+                Buku <b>{{loan.book.title}}</b> belum dikembalikan.
+              </div>
+            {{/if}}
+          {{else}}
+            <div class="alert alert-success mb-0 py-2 px-3">
+              <i class="bi bi-check2-circle me-1"></i>
+              Buku <b>{{loan.book.title}}</b> sudah dikembalikan pada
+              {{formatDate loan.returnedAt}}.
+            </div>
+          {{/if}}
+
+          <a href="/loans/{{loan.id}}/edit" class="btn btn-outline-primary ms-auto">
+            <i class="bi bi-pencil me-1"></i> Ubah Transaksi
+          </a>
+          <a href="/loans" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Kembali ke Daftar
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card h-100">
+      <div class="card-header">
+        <span><i class="bi bi-book me-2"></i>Buku yang Dipinjam</span>
+      </div>
+      <div class="card-body">
+        <div class="text-center mb-3">
+          <i class="bi bi-journal-bookmark-fill text-primary" style="font-size:48px"></i>
+        </div>
+
+        <h6 class="fw-bold text-center mb-1">{{loan.book.title}}</h6>
+        <div class="text-center text-muted small mb-3">
+          <code>{{loan.book.code}}</code>
+        </div>
+
+        <table class="table table-sm mb-0">
+          <tbody>
+            <tr>
+              <td class="text-muted">Pengarang</td>
+              <td class="text-end fw-semibold">{{loan.book.author}}</td>
+            </tr>
+            <tr>
+              <td class="text-muted">Penerbit</td>
+              <td class="text-end">{{loan.book.publisher}}</td>
+            </tr>
+            <tr>
+              <td class="text-muted">Tahun</td>
+              <td class="text-end">{{loan.book.publishedYear}}</td>
+            </tr>
+            <tr>
+              <td class="text-muted">Kategori</td>
+              <td class="text-end">
+                <span class="badge text-bg-{{categoryColor loan.book.category}}">
+                  {{loan.book.category}}
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td class="text-muted">Stok Tersedia</td>
+              <td class="text-end">
+                <span class="badge text-bg-{{stockColor loan.book.available}}">
+                  {{loan.book.available}} / {{loan.book.stock}}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>

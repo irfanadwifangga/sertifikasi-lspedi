@@ -1,0 +1,179 @@
+{{!-- ======================================================================
+      HALAMAN 7 — LAPORAN & CETAK
+      Halaman ini memperagakan dua library pihak ketiga sekaligus:
+      PDFMAKE (cetak laporan PDF) dan NODEMAILER (kirim surel pengingat).
+     ====================================================================== --}}
+
+<div class="card mb-3">
+  <div class="card-header">
+    <span><i class="bi bi-funnel me-2"></i>Periode Laporan</span>
+  </div>
+  <div class="card-body">
+    <form method="GET" action="/reports" class="row g-3 align-items-end">
+      <div class="col-md-4">
+        <label class="form-label">Tanggal Awal</label>
+        <input type="date" name="from" class="form-control" value="{{from}}">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Tanggal Akhir</label>
+        <input type="date" name="to" class="form-control" value="{{to}}">
+      </div>
+      <div class="col-md-4 d-flex gap-2">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-search me-1"></i> Tampilkan
+        </button>
+        <a href="/reports" class="btn btn-outline-secondary">Atur Ulang</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+        <i class="bi bi-list-ul"></i>
+      </div>
+      <div>
+        <div class="stat-value">{{summary.totalLoans}}</div>
+        <div class="stat-label">Transaksi</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+        <i class="bi bi-hourglass-split"></i>
+      </div>
+      <div>
+        <div class="stat-value">{{summary.ongoing}}</div>
+        <div class="stat-label">Sedang Dipinjam</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon bg-success bg-opacity-10 text-success">
+        <i class="bi bi-check2-circle"></i>
+      </div>
+      <div>
+        <div class="stat-value">{{summary.returned}}</div>
+        <div class="stat-label">Sudah Kembali</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon bg-danger bg-opacity-10 text-danger">
+        <i class="bi bi-cash-coin"></i>
+      </div>
+      <div>
+        <div class="stat-value">{{totalFineFormatted}}</div>
+        <div class="stat-label">Total Denda</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{!-- ---------- Panel aksi library pihak ketiga ---------- --}}
+<div class="row g-3 mb-3">
+  <div class="col-lg-6">
+    <div class="card h-100 border-primary border-opacity-25">
+      <div class="card-body d-flex align-items-center gap-3">
+        <i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size:38px"></i>
+        <div class="flex-grow-1">
+          <div class="fw-semibold">Cetak Laporan PDF</div>
+          <div class="text-muted small">
+            Menghasilkan berkas PDF berisi tabel transaksi dan ringkasan,
+            dibuat memakai library <b>pdfmake</b>.
+          </div>
+        </div>
+        <a href="/reports/pdf?from={{from}}&amp;to={{to}}" class="btn btn-danger text-nowrap">
+          <i class="bi bi-download me-1"></i> Unduh PDF
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card h-100 border-warning border-opacity-25">
+      <div class="card-body d-flex align-items-center gap-3">
+        <i class="bi bi-envelope-paper-fill text-warning" style="font-size:38px"></i>
+        <div class="flex-grow-1">
+          <div class="fw-semibold">
+            Kirim Surel Pengingat
+            {{#if (gt overdueCount 0)}}
+              <span class="badge text-bg-danger ms-1">{{overdueCount}} terlambat</span>
+            {{/if}}
+          </div>
+          <div class="text-muted small">
+            Mengirim surel ke seluruh peminjam yang terlambat memakai library
+            <b>Nodemailer</b>. Hasilnya dapat dilihat di
+            <a href="http://localhost:8025" target="_blank" rel="noopener">kotak masuk Mailpit</a>.
+          </div>
+        </div>
+        <form method="POST" action="/reports/send-reminders">
+          <button type="submit" class="btn btn-warning text-nowrap">
+            <i class="bi bi-send me-1"></i> Kirim
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{!-- ---------- Pratinjau isi laporan ---------- --}}
+<div class="card">
+  <div class="card-header">
+    <span><i class="bi bi-table me-2"></i>Pratinjau Laporan</span>
+    <span class="text-muted small">{{summary.totalLoans}} baris data</span>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th style="width:44px">No</th>
+          <th>Kode</th>
+          <th>Peminjam</th>
+          <th>Judul Buku</th>
+          <th>Pinjam</th>
+          <th>Jatuh Tempo</th>
+          <th>Kembali</th>
+          <th class="text-center">Status</th>
+          <th class="text-end">Denda</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each loans}}
+          <tr>
+            <td class="text-muted">{{inc @index}}</td>
+            <td><code>{{this.code}}</code></td>
+            <td>{{this.borrowerName}}</td>
+            <td>{{this.book.title}}</td>
+            <td>{{formatDate this.borrowedAt}}</td>
+            <td>{{formatDate this.dueAt}}</td>
+            <td>{{formatDate this.returnedAt}}</td>
+            <td class="text-center">
+              <span class="badge text-bg-{{statusColor this.displayStatus}}">
+                {{this.displayStatus}}
+              </span>
+            </td>
+            <td class="text-end {{#if (gt this.fine 0)}}text-danger fw-semibold{{/if}}">
+              {{currency this.fine}}
+            </td>
+          </tr>
+        {{else}}
+          <tr>
+            <td colspan="9">
+              <div class="kosong">
+                <i class="bi bi-calendar-x"></i>
+                Tidak ada transaksi pada periode {{from}} s.d. {{to}}.
+              </div>
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</div>

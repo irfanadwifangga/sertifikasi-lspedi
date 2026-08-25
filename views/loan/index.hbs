@@ -1,0 +1,141 @@
+{{!-- ======================================================================
+      HALAMAN 4 — TRANSAKSI PEMINJAMAN
+      Daftar seluruh transaksi lengkap dengan filter status dan aksi cepat
+      untuk memproses pengembalian buku.
+     ====================================================================== --}}
+
+<div class="row g-3 mb-3">
+  <div class="col-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon bg-secondary bg-opacity-10 text-secondary">
+        <i class="bi bi-list-ul"></i>
+      </div>
+      <div>
+        <div class="stat-value">{{summary.totalLoans}}</div>
+        <div class="stat-label">Total Transaksi</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+        <i class="bi bi-hourglass-split"></i>
+      </div>
+      <div>
+        <div class="stat-value">{{summary.ongoing}}</div>
+        <div class="stat-label">Sedang Dipinjam</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon bg-success bg-opacity-10 text-success">
+        <i class="bi bi-check2-circle"></i>
+      </div>
+      <div>
+        <div class="stat-value">{{summary.returned}}</div>
+        <div class="stat-label">Sudah Kembali</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon bg-danger bg-opacity-10 text-danger">
+        <i class="bi bi-cash-coin"></i>
+      </div>
+      <div>
+        <div class="stat-value">{{currency summary.totalFine}}</div>
+        <div class="stat-label">Total Denda</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <span><i class="bi bi-arrow-left-right me-2"></i>Daftar Transaksi</span>
+
+    <div class="d-flex gap-2">
+      <div class="btn-group btn-group-sm">
+        <a href="/loans"
+           class="btn btn-outline-secondary {{#if (eq status '')}}active{{/if}}">Semua</a>
+        <a href="/loans?status=borrowed"
+           class="btn btn-outline-secondary {{#if (eq status 'borrowed')}}active{{/if}}">Dipinjam</a>
+        <a href="/loans?status=returned"
+           class="btn btn-outline-secondary {{#if (eq status 'returned')}}active{{/if}}">Dikembalikan</a>
+      </div>
+
+      <a href="/loans/new" class="btn btn-sm btn-primary text-nowrap">
+        <i class="bi bi-plus-lg"></i> Pinjam Buku
+      </a>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th style="width:44px">No</th>
+          <th>Kode</th>
+          <th>Peminjam</th>
+          <th>Judul Buku</th>
+          <th>Pinjam</th>
+          <th>Jatuh Tempo</th>
+          <th>Kembali</th>
+          <th class="text-center">Status</th>
+          <th class="text-end">Denda</th>
+          <th class="text-end">Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each loans}}
+          <tr>
+            <td class="text-muted">{{inc @index}}</td>
+            <td><code>{{this.code}}</code></td>
+            <td>
+              <div class="fw-semibold">{{this.borrowerName}}</div>
+              <div class="text-muted" style="font-size:11.5px">{{this.borrowerEmail}}</div>
+            </td>
+            <td>{{this.book.title}}</td>
+            <td>{{formatDate this.borrowedAt}}</td>
+            <td>{{formatDate this.dueAt}}</td>
+            <td>{{formatDate this.returnedAt}}</td>
+            <td class="text-center">
+              <span class="badge text-bg-{{statusColor this.displayStatus}}">
+                {{this.displayStatus}}
+              </span>
+            </td>
+            <td class="text-end {{#if (gt this.fine 0)}}text-danger fw-semibold{{/if}}">
+              {{currency this.fine}}
+            </td>
+            <td class="text-end text-nowrap">
+              <a href="/loans/{{this.id}}" class="btn btn-sm btn-outline-secondary" title="Detail">
+                <i class="bi bi-eye"></i>
+              </a>
+              <a href="/loans/{{this.id}}/edit" class="btn btn-sm btn-outline-primary" title="Ubah">
+                <i class="bi bi-pencil"></i>
+              </a>
+              {{#if this.isOngoing}}
+                <form method="POST" action="/loans/{{this.id}}/return" class="d-inline"
+                      onsubmit="return confirm('Proses pengembalian untuk transaksi {{this.code}}?');">
+                  <button type="submit" class="btn btn-sm btn-success" title="Proses pengembalian">
+                    <i class="bi bi-box-arrow-in-down"></i>
+                  </button>
+                </form>
+              {{/if}}
+            </td>
+          </tr>
+        {{else}}
+          <tr>
+            <td colspan="10">
+              <div class="kosong">
+                <i class="bi bi-inbox"></i>
+                Belum ada transaksi pada filter ini.
+              </div>
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</div>

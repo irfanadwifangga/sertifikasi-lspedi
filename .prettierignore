@@ -1,0 +1,11 @@
+# Templat Handlebars TIDAK boleh diformat oleh Prettier.
+# Prettier memperlakukan isi berkas .hbs sebagai HTML biasa dan merusak
+# sintaks templat ({{#if}}, {{{body}}}) maupun blok <script> di dalamnya —
+# isi script dialirkan seperti paragraf sehingga tidak lagi berupa JS valid.
+views/
+
+# Berkas hasil build dan dependensi
+dist/
+coverage/
+node_modules/
+bun.lock
