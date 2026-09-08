@@ -6,7 +6,7 @@
  * kategori yang bekerja tanpa memuat ulang halaman.
  */
 import Layout from '../layouts/Layout.astro';
-import HeaderHalaman from '../components/HeaderHalaman.astro';
+import PageHeader from '../components/PageHeader.astro';
 
 import ekskul from '../data/ekstrakurikuler.json';
 
@@ -15,9 +15,9 @@ import ekskul from '../data/ekstrakurikuler.json';
  * Menambah ekstrakurikuler berkategori baru langsung memunculkan tombol
  * penyaringnya tanpa menyentuh kode ini.
  */
-const kategori = ['Semua', ...new Set(ekskul.map((e) => e.kategori))];
+const categories = ['Semua', ...new Set(ekskul.map((e) => e.kategori))];
 
-const ikon: Record<string, string> = {
+const icon: Record<string, string> = {
   tent: 'M12 3 3 20h7l2-4 2 4h7zm0 5 4 9h-8z',
   wrench: 'M14.7 6.3a4 4 0 0 1-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 0 1 5.4-5.4l-2.5 2.5 2.1 2.1z',
   heart: 'M12 20s-7-4.6-7-9.3A3.7 3.7 0 0 1 12 8a3.7 3.7 0 0 1 7 2.7C19 15.4 12 20 12 20z',
@@ -26,7 +26,7 @@ const ikon: Record<string, string> = {
   music: 'M12 3v10.6A4 4 0 1 0 14 17V7h4V3z',
 };
 
-const warna: Record<string, string> = {
+const color: Record<string, string> = {
   amber: 'bg-amber-100 text-amber-700',
   blue: 'bg-sky-100 text-sky-700',
   rose: 'bg-rose-100 text-rose-700',
@@ -37,26 +37,26 @@ const warna: Record<string, string> = {
 ---
 
 <Layout
-  judul="Ekstrakurikuler"
-  deskripsi="Daftar kegiatan ekstrakurikuler sebagai wadah pengembangan minat, bakat, dan karakter peserta didik."
+  title="Ekstrakurikuler"
+  description="Daftar kegiatan ekstrakurikuler sebagai wadah pengembangan minat, bakat, dan karakter peserta didik."
 >
-  <HeaderHalaman
-    remah="Ekstrakurikuler"
-    judul="Ekstrakurikuler"
-    keterangan="Kegiatan di luar jam pelajaran sebagai wadah pengembangan minat, bakat, kepemimpinan, dan karakter peserta didik."
+  <PageHeader
+    breadcrumb="Ekstrakurikuler"
+    title="Ekstrakurikuler"
+    subtitle="Kegiatan di luar jam pelajaran sebagai wadah pengembangan minat, bakat, kepemimpinan, dan karakter peserta didik."
   />
 
   <section class="py-16 sm:py-24">
     <div class="wrap">
-      <!-- Penyaring kategori -->
+      <!-- Penyaring categories -->
       <div class="flex flex-wrap justify-center gap-2.5" data-aos="fade-up">
         {
-          kategori.map((k, i) => (
+          categories.map((k, i) => (
             <button
               type="button"
               class="filter-ekskul rounded-full border px-4.5 py-2 text-[13.5px] font-semibold transition-colors"
-              data-kategori={k}
-              data-aktif={i === 0}
+              data-category={k}
+              data-active={i === 0}
             >
               {k}
             </button>
@@ -70,13 +70,13 @@ const warna: Record<string, string> = {
           ekskul.map((e, i) => (
             <article
               class="kartu-ekskul card card-hover flex flex-col p-7"
-              data-kategori={e.kategori}
+              data-category={e.kategori}
               data-aos="fade-up"
               data-aos-delay={(i % 3) * 90}
             >
-              <div class={`inline-flex h-13 w-13 items-center justify-center rounded-xl ${warna[e.warna]}`}>
+              <div class={`inline-flex h-13 w-13 items-center justify-center rounded-xl ${color[e.warna]}`}>
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
-                  <path d={ikon[e.ikon]} />
+                  <path d={icon[e.ikon]} />
                 </svg>
               </div>
 
@@ -116,7 +116,7 @@ const warna: Record<string, string> = {
 
       <!-- Pesan bila tidak ada hasil -->
       <p id="ekskul-kosong" class="hidden py-16 text-center text-slate-500">
-        Belum ada kegiatan pada kategori ini.
+        Belum ada kegiatan pada categories ini.
       </p>
     </div>
   </section>
@@ -134,7 +134,7 @@ const warna: Record<string, string> = {
     color: var(--color-navy-700);
   }
 
-  .filter-ekskul[data-aktif='true'] {
+  .filter-ekskul[data-active='true'] {
     border-color: var(--color-navy-800);
     background: var(--color-navy-800);
     color: #ffffff;
@@ -149,41 +149,41 @@ const warna: Record<string, string> = {
    * disembunyikan, tanpa memuat ulang halaman. Bila tidak ada kartu tersisa,
    * ditampilkan pesan pengganti.
    */
-  function siapkanFilterEkskul(): void {
-    const tombolSemua = document.querySelectorAll<HTMLButtonElement>('.filter-ekskul');
-    const kartuSemua = document.querySelectorAll<HTMLElement>('.kartu-ekskul');
-    const pesanKosong = document.getElementById('ekskul-kosong');
+  function setupActivityFilter(): void {
+    const buttons = document.querySelectorAll<HTMLButtonElement>('.filter-ekskul');
+    const cards = document.querySelectorAll<HTMLElement>('.kartu-ekskul');
+    const emptyMessage = document.getElementById('ekskul-kosong');
 
-    if (tombolSemua.length === 0 || !pesanKosong) return;
+    if (buttons.length === 0 || !emptyMessage) return;
 
     /**
      * Menampilkan kartu sesuai kategori terpilih.
      *
-     * @param pilihan Nama kategori, atau "Semua" untuk menampilkan seluruhnya.
+     * @param choice Nama kategori, atau "Semua" untuk menampilkan seluruhnya.
      */
-    function saring(pilihan: string): void {
-      let terlihat = 0;
+    function applyFilter(choice: string): void {
+      let visible = 0;
 
-      kartuSemua.forEach((kartu) => {
-        const cocok = pilihan === 'Semua' || kartu.dataset.kategori === pilihan;
-        kartu.classList.toggle('hidden', !cocok);
-        if (cocok) terlihat += 1;
+      cards.forEach((card) => {
+        const matches = choice === 'Semua' || card.dataset.category === choice;
+        card.classList.toggle('hidden', !matches);
+        if (matches) visible += 1;
       });
 
-      pesanKosong!.classList.toggle('hidden', terlihat > 0);
+      emptyMessage!.classList.toggle('hidden', visible > 0);
     }
 
-    tombolSemua.forEach((tombol) => {
-      tombol.addEventListener('click', () => {
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
         // Tandai tombol yang sedang aktif.
-        tombolSemua.forEach((t) => t.setAttribute('data-aktif', 'false'));
-        tombol.setAttribute('data-aktif', 'true');
+        buttons.forEach((t) => t.setAttribute('data-active', 'false'));
+        button.setAttribute('data-active', 'true');
 
-        saring(tombol.dataset.kategori ?? 'Semua');
+        applyFilter(button.dataset.category ?? 'Semua');
       });
     });
   }
 
-  siapkanFilterEkskul();
-  document.addEventListener('astro:page-load', siapkanFilterEkskul);
+  setupActivityFilter();
+  document.addEventListener('astro:page-load', setupActivityFilter);
 </script>

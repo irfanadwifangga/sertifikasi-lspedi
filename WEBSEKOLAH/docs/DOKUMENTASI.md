@@ -57,7 +57,7 @@ pemenuhannya di dalam kode.
 |---|---|---|---|
 | 1 | Website sekolah dengan user interface yang interaktif pada menu-menu di halaman utama | Menu utama berubah latar dan warna teks saat halaman digulir, menandai halaman yang sedang dibuka, serta berubah menjadi menu hamburger pada layar sempit | `components/Navbar.astro` |
 | 2 | Pada halaman utama terdapat menu utama seperti Beranda, Profil Sekolah, Ekstrakurikuler, Galeri dll | Tujuh menu utama. Daftarnya ditulis sekali sebagai array lalu dirender berulang, sehingga menu layar lebar dan menu seluler tidak pernah berbeda isi | `components/Navbar.astro` |
-| 3 | Pada halaman utama terdapat berita kegiatan sekolah, galeri dan informasi jumlah guru dan siswa | Tiga bagian tersedia di beranda: tiga berita terbaru, enam cuplikan galeri, dan bagian angka guru/siswa berikut grafik lingkarannya | `pages/index.astro`, `components/Statistik.astro` |
+| 3 | Pada halaman utama terdapat berita kegiatan sekolah, galeri dan informasi jumlah guru dan siswa | Tiga bagian tersedia di beranda: tiga berita terbaru, enam cuplikan galeri, dan bagian angka guru/siswa berikut grafik lingkarannya | `pages/index.astro`, `components/Statistics.astro` |
 | 4 | Setiap Menu utama memiliki halaman tersendiri | Satu berkas `.astro` untuk satu halaman, memakai routing berbasis berkas | `src/pages/` |
 | 5 | Terdapat Tabel Informasi Profil Sekolah pada menu utama Profil Sekolah | Tabel 22 baris berisi identitas, alamat, kontak, dan data pokok sekolah, dibangun lewat perulangan atas array | `pages/profil.astro` |
 
@@ -95,7 +95,7 @@ pemenuhannya di dalam kode.
 | **Swiper** | 14.2 | Pergantian gambar sampul pada beranda, lengkap dengan titik navigasi dan gerak sentuh | `pages/index.astro` |
 | **GLightbox** | 3.3 | Memperbesar foto galeri tanpa berpindah halaman | `pages/galeri.astro`, `pages/index.astro` |
 | **AOS** | 2.3 | Animasi elemen saat masuk layar | `layouts/Layout.astro` |
-| **Chart.js** | 4.5 | Grafik lingkaran komposisi peserta didik pada elemen `<canvas>` | `components/Statistik.astro` |
+| **Chart.js** | 4.5 | Grafik lingkaran komposisi peserta didik pada elemen `<canvas>` | `components/Statistics.astro` |
 
 Keenam library dipasang lewat pengelola paket, bukan disalin ke dalam
 proyek, sehingga versinya terkunci di `package.json` dan `bun.lock` serta
@@ -123,11 +123,11 @@ dapat dipasang ulang persis sama oleh siapa pun.
 |---|---|
 | `Navbar.astro` | Menu utama: penanda halaman aktif, perubahan latar saat digulir, menu hamburger |
 | `Footer.astro` | Kaki halaman: identitas, tautan cepat, kontak, jam layanan |
-| `HeaderHalaman.astro` | Kepala halaman dalam beserta remah roti (breadcrumb) |
-| `Judul.astro` | Kepala tiap bagian, agar jaraknya seragam di seluruh halaman |
-| `KartuBerita.astro` | Satu kartu berita, dipakai di beranda maupun halaman berita |
-| `Statistik.astro` | Angka guru/siswa yang menghitung naik dan grafik Chart.js |
-| `VideoProfil.astro` | Pemutar video profil dengan tombol putar buatan sendiri |
+| `PageHeader.astro` | Kepala halaman dalam beserta remah roti (breadcrumb) |
+| `SectionTitle.astro` | Kepala tiap bagian, agar jaraknya seragam di seluruh halaman |
+| `NewsCard.astro` | Satu kartu berita, dipakai di beranda maupun halaman berita |
+| `Statistics.astro` | Angka guru/siswa yang menghitung naik dan grafik Chart.js |
+| `ProfileVideo.astro` | Pemutar video profil dengan tombol putar buatan sendiri |
 
 #### C. Kerangka dan Sumber Daya Lain
 
@@ -187,9 +187,15 @@ Inggris**, sedangkan komentar dan seluruh isi yang dibaca pengunjung ditulis
 dalam **Bahasa Indonesia**. Pemisahan ini disengaja: kode mengikuti kebiasaan
 umum pemrograman, sementara isinya tetap sesuai pembaca situs.
 
-Satu pengecualian didokumentasikan terbuka di dalam kode: batasan generik
-`{ tanggal: string }` pada `sortByNewest` sengaja tetap Bahasa Indonesia
-karena `tanggal` adalah nama bidang pada berkas data.
+Dua hal sengaja tetap Bahasa Indonesia karena keduanya bukan pengenal
+program:
+
+1. **Nama bidang pada berkas data**, misalnya `judul`, `tanggal`, dan
+   `kategori`. Batasan generik `{ tanggal: string }` pada `sortByNewest`
+   ikut mempertahankannya, dan alasannya ditulis di dalam kode.
+2. **Nama `id` dan kelas pada HTML**, misalnya `#form-kontak` dan
+   `.item-galeri`. Keduanya milik markup dan dirujuk dari CSS maupun
+   berkas gaya, sehingga diperlakukan seperti nama berkas gambar.
 
 ### 5.2 Komentar
 
@@ -409,10 +415,10 @@ const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWit
 ---
 
 <ul id="menu-desktop" class="hidden items-center gap-1 lg:flex">
-  {menu.map((m) => (
+  {menu.map((item) => (
     <li>
-      <a href={m.href} class="nav-link" data-aktif={isActive(m.href)}>
-        {m.label}
+      <a href={item.href} class="nav-link" data-active={isActive(item.href)}>
+        {item.label}
       </a>
     </li>
   ))}
@@ -428,42 +434,42 @@ const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWit
  * Dibungkus dalam satu fungsi agar tidak mencemari lingkup global, dan
  * dijalankan ulang pada setiap perpindahan halaman.
  */
-function siapkanNavbar(): void {
+function setupNavbar(): void {
   const navbar = document.getElementById('navbar');
   const toggle = document.getElementById('menu-toggle');
   const panel = document.getElementById('menu-mobile');
-  const ikonBuka = document.getElementById('icon-open');
-  const ikonTutup = document.getElementById('icon-close');
+  const openIcon = document.getElementById('icon-open');
+  const closeIcon = document.getElementById('icon-close');
 
-  if (!navbar || !toggle || !panel || !ikonBuka || !ikonTutup) return;
+  if (!navbar || !toggle || !panel || !openIcon || !closeIcon) return;
 
   // Halaman selain beranda tidak punya gambar sampul, sehingga navbar
   // harus langsung solid agar tulisannya terbaca.
-  const diBeranda = (window.location.pathname.replace(/\/+$/, '') || '/') === '/';
-  if (!diBeranda) navbar.classList.add('solid');
+  const onHome = (window.location.pathname.replace(/\/+$/, '') || '/') === '/';
+  if (!onHome) navbar.classList.add('solid');
 
   /** Menambah latar solid begitu halaman digulir melewati 20 piksel. */
-  function perbaruiLatar(): void {
-    if (!diBeranda) return;
+  function updateBackground(): void {
+    if (!onHome) return;
     navbar!.classList.toggle('scrolled', window.scrollY > 20);
   }
 
   /** Membuka atau menutup panel menu pada layar sempit. */
-  function alihkanMenu(): void {
-    const terbuka = !panel!.classList.contains('hidden');
-    panel!.classList.toggle('hidden', terbuka);
-    ikonBuka!.classList.toggle('hidden', !terbuka);
-    ikonTutup!.classList.toggle('hidden', terbuka);
-    toggle!.setAttribute('aria-expanded', String(!terbuka));
+  function toggleMenu(): void {
+    const isOpen = !panel!.classList.contains('hidden');
+    panel!.classList.toggle('hidden', isOpen);
+    openIcon!.classList.toggle('hidden', !isOpen);
+    closeIcon!.classList.toggle('hidden', isOpen);
+    toggle!.setAttribute('aria-expanded', String(!isOpen));
 
     // Saat panel terbuka, navbar wajib solid agar menu terbaca.
-    if (!terbuka) navbar!.classList.add('scrolled');
-    else perbaruiLatar();
+    if (!isOpen) navbar!.classList.add('scrolled');
+    else updateBackground();
   }
 
-  perbaruiLatar();
-  window.addEventListener('scroll', perbaruiLatar, { passive: true });
-  toggle.addEventListener('click', alihkanMenu);
+  updateBackground();
+  window.addEventListener('scroll', updateBackground, { passive: true });
+  toggle.addEventListener('click', toggleMenu);
 }
 ```
 
@@ -528,13 +534,13 @@ perulangan atas sebuah array.
  * Disusun sebagai array objek agar tabelnya dihasilkan lewat perulangan.
  * Inilah penerapan pemrograman terstruktur pada sisi tampilan.
  */
-const barisProfil = [
-  { label: 'Nama Sekolah', nilai: identitas.nama },
-  { label: 'NPSN', nilai: identitas.npsn },
-  { label: 'Bentuk Pendidikan', nilai: identitas.bentukPendidikan },
-  { label: 'Status Sekolah', nilai: identitas.statusSekolah },
-  { label: 'Akreditasi', nilai: identitas.akreditasi, sorot: true },
-  { label: 'Tahun Berdiri', nilai: String(identitas.tahunBerdiri) },
+const profileRows = [
+  { label: 'Nama Sekolah', value: identitas.nama },
+  { label: 'NPSN', value: identitas.npsn },
+  { label: 'Bentuk Pendidikan', value: identitas.bentukPendidikan },
+  { label: 'Status Sekolah', value: identitas.statusSekolah },
+  { label: 'Akreditasi', value: identitas.akreditasi, highlight: true },
+  { label: 'Tahun Berdiri', value: String(identitas.tahunBerdiri) },
   // ... 16 baris lainnya
 ];
 ---
@@ -551,14 +557,14 @@ const barisProfil = [
   </thead>
 
   <tbody>
-    {barisProfil.map((baris, i) => (
+    {profileRows.map((row, i) => (
       <tr class={`border-t border-slate-100 ${i % 2 === 1 ? 'bg-slate-50/70' : ''}`}>
         <td class="px-5 py-3 text-center text-slate-500">{i + 1}</td>
         <th scope="row" class="px-5 py-3 font-semibold text-navy-900">
-          {baris.label}
+          {row.label}
         </th>
-        <td class={`px-5 py-3 ${baris.sorot ? 'font-bold text-amber-deep' : 'text-slate-700'}`}>
-          {baris.nilai}
+        <td class={`px-5 py-3 ${row.highlight ? 'font-bold text-amber-deep' : 'text-slate-700'}`}>
+          {row.value}
         </td>
       </tr>
     ))}
@@ -574,23 +580,23 @@ mengerjakan sesuatu yang belum terlihat pengunjung.
 ```ts
 import Chart from 'chart.js/auto';
 
-const kanvas = document.getElementById('grafik-siswa') as HTMLCanvasElement | null;
-if (!kanvas) return;
+const canvas = document.getElementById('grafik-siswa') as HTMLCanvasElement | null;
+if (!canvas) return;
 
-const laki = Number(kanvas.dataset.laki ?? 0);
-const perempuan = Number(kanvas.dataset.perempuan ?? 0);
+const male = Number(canvas.dataset.male ?? 0);
+const female = Number(canvas.dataset.female ?? 0);
 
-const pengamatGrafik = new IntersectionObserver(
-  (entri) => {
-    for (const e of entri) {
+const chartObserver = new IntersectionObserver(
+  (entries) => {
+    for (const e of entries) {
       if (!e.isIntersecting) continue;
 
-      new Chart(kanvas, {
+      new Chart(canvas, {
         type: 'doughnut',
         data: {
-          labels: ['Laki-laki', 'Perempuan'],
+          labels: ['Laki-male', 'Perempuan'],
           datasets: [{
-            data: [laki, perempuan],
+            data: [male, female],
             backgroundColor: ['#38bdf8', '#f5a524'],
             borderWidth: 0,
             hoverOffset: 10,
@@ -607,10 +613,10 @@ const pengamatGrafik = new IntersectionObserver(
             },
             tooltip: {
               callbacks: {
-                label: (konteks) => {
-                  const nilai = konteks.parsed as number;
-                  const persen = ((nilai / (laki + perempuan)) * 100).toFixed(1);
-                  return ` ${konteks.label}: ${nilai} siswa (${persen}%)`;
+                label: (ctx) => {
+                  const value = ctx.parsed as number;
+                  const percent = ((value / (male + female)) * 100).toFixed(1);
+                  return ` ${ctx.label}: ${value} siswa (${percent}%)`;
                 },
               },
             },
@@ -618,13 +624,13 @@ const pengamatGrafik = new IntersectionObserver(
         },
       });
 
-      pengamatGrafik.unobserve(e.target);
+      chartObserver.unobserve(e.target);
     }
   },
   { threshold: 0.3 },
 );
 
-pengamatGrafik.observe(kanvas);
+chartObserver.observe(canvas);
 ```
 
 ### 12.6 Teks — Angka yang Menghitung Naik
@@ -633,23 +639,23 @@ pengamatGrafik.observe(kanvas);
 /**
  * Menghitung angka dari nol sampai nilai tujuan.
  *
- * @param elemen Elemen tempat angka ditampilkan.
+ * @param element Elemen tempat angka ditampilkan.
  */
-function hitungNaik(elemen: HTMLElement): void {
-  const tujuan = Number(elemen.dataset.nilai ?? 0);
-  const durasi = 1400;
-  const mulai = performance.now();
+function countUp(element: HTMLElement): void {
+  const target = Number(element.dataset.value ?? 0);
+  const duration = 1400;
+  const start = performance.now();
 
-  function langkah(waktu: number): void {
-    const maju = Math.min((waktu - mulai) / durasi, 1);
+  function step(now: number): void {
+    const progress = Math.min((now - start) / duration, 1);
     // Perlambatan di akhir agar terasa halus.
-    const mulus = 1 - Math.pow(1 - maju, 3);
-    elemen.textContent = Math.round(tujuan * mulus).toLocaleString('id-ID');
+    const eased = 1 - Math.pow(1 - progress, 3);
+    element.textContent = Math.round(target * eased).toLocaleString('id-ID');
 
-    if (maju < 1) requestAnimationFrame(langkah);
+    if (progress < 1) requestAnimationFrame(step);
   }
 
-  requestAnimationFrame(langkah);
+  requestAnimationFrame(step);
 }
 ```
 
@@ -668,18 +674,18 @@ let lightbox = GLightbox({ selector: '.item-galeri:not(.hidden)', touchNavigatio
 /**
  * Menyaring foto berdasarkan kategori terpilih.
  *
- * @param pilihan Nama kategori, atau "Semua".
+ * @param choice Nama kategori, atau "Semua".
  */
-function saring(pilihan: string): void {
-  let terlihat = 0;
+function applyFilter(choice: string): void {
+  let visible = 0;
 
-  itemSemua.forEach((item) => {
-    const cocok = pilihan === 'Semua' || item.dataset.kategori === pilihan;
-    item.classList.toggle('hidden', !cocok);
-    if (cocok) terlihat += 1;
+  items.forEach((item) => {
+    const matches = choice === 'Semua' || item.dataset.category === choice;
+    item.classList.toggle('hidden', !matches);
+    if (matches) visible += 1;
   });
 
-  pesanKosong!.classList.toggle('hidden', terlihat > 0);
+  emptyMessage!.classList.toggle('hidden', visible > 0);
 
   // Segarkan daftar foto yang dikenali lightbox.
   lightbox.destroy();
@@ -690,32 +696,32 @@ function saring(pilihan: string): void {
 ### 12.8 Library — Pencarian Berita dengan Penundaan
 
 ```ts
-let penunda: number | undefined;
+let debounceTimer: number | undefined;
 
-function saring(kunci: string): void {
-  const cari = kunci.trim().toLowerCase();
-  let terlihat = 0;
+function applyFilter(keyword: string): void {
+  const query = keyword.trim().toLowerCase();
+  let visible = 0;
 
-  semuaItem.forEach((item) => {
-    const judul = item.dataset.judul ?? '';
-    const kategori = item.dataset.kategori ?? '';
-    const cocok = cari === '' || judul.includes(cari) || kategori.includes(cari);
+  items.forEach((item) => {
+    const title = item.dataset.title ?? '';
+    const category = item.dataset.category ?? '';
+    const matches = query === '' || title.includes(query) || category.includes(query);
 
-    item.classList.toggle('hidden', !cocok);
-    if (cocok) terlihat += 1;
+    item.classList.toggle('hidden', !matches);
+    if (matches) visible += 1;
   });
 
-  info!.textContent = cari === ''
-    ? `Menampilkan ${semuaItem.length} berita.`
-    : `Ditemukan ${terlihat} berita untuk "${kunci.trim()}".`;
+  info!.textContent = query === ''
+    ? `Menampilkan ${items.length} berita.`
+    : `Ditemukan ${visible} berita untuk "${keyword.trim()}".`;
 
-  pesanKosong!.classList.toggle('hidden', terlihat > 0);
+  emptyMessage!.classList.toggle('hidden', visible > 0);
 }
 
 // Penyaringan ditunda agar tidak dijalankan pada setiap ketukan tombol.
 input.addEventListener('input', () => {
-  window.clearTimeout(penunda);
-  penunda = window.setTimeout(() => saring(input.value), 180);
+  window.clearTimeout(debounceTimer);
+  debounceTimer = window.setTimeout(() => applyFilter(input.value), 180);
 });
 ```
 
@@ -726,22 +732,22 @@ percabangan. Menambah isian baru berarti menambah satu baris aturan.
 
 ```ts
 /** Aturan validasi per nama kolom. */
-const aturan: Record<string, (nilai: string) => string | null> = {
-  nama: (nilai) => {
-    if (nilai.trim() === '') return 'Nama lengkap wajib diisi.';
-    if (nilai.trim().length < 3) return 'Nama lengkap minimal 3 karakter.';
+const rules: Record<string, (value: string) => string | null> = {
+  nama: (value) => {
+    if (value.trim() === '') return 'Nama lengkap wajib diisi.';
+    if (value.trim().length < 3) return 'Nama lengkap minimal 3 karakter.';
     return null;
   },
-  email: (nilai) => {
-    if (nilai.trim() === '') return 'Alamat surel wajib diisi.';
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(nilai.trim()))
+  email: (value) => {
+    if (value.trim() === '') return 'Alamat surel wajib diisi.';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value.trim()))
       return 'Format alamat surel tidak valid.';
     return null;
   },
-  subjek: (nilai) => (nilai === '' ? 'Keperluan wajib dipilih.' : null),
-  pesan: (nilai) => {
-    if (nilai.trim() === '') return 'Pesan wajib diisi.';
-    if (nilai.trim().length < 10) return 'Pesan minimal 10 karakter.';
+  subjek: (value) => (value === '' ? 'Keperluan wajib dipilih.' : null),
+  pesan: (value) => {
+    if (value.trim() === '') return 'Pesan wajib diisi.';
+    if (value.trim().length < 10) return 'Pesan minimal 10 karakter.';
     return null;
   },
 };
@@ -756,29 +762,29 @@ const aturan: Record<string, (nilai: string) => string | null> = {
  * Tombol disembunyikan saat video berjalan dan ditampilkan lagi ketika
  * video dijeda atau selesai, sehingga tampilannya selalu sesuai keadaan.
  */
-function siapkanVideo(): void {
+function setupVideo(): void {
   const video = document.getElementById('video-profil') as HTMLVideoElement | null;
-  const tombol = document.getElementById('tombol-putar');
+  const button = document.getElementById('button-putar');
 
-  if (!video || !tombol) return;
+  if (!video || !button) return;
 
   /** Menyembunyikan atau menampilkan tombol putar. */
-  function aturTombol(sembunyikan: boolean): void {
-    tombol!.classList.toggle('hidden', sembunyikan);
+  function toggleOverlay(hide: boolean): void {
+    button!.classList.toggle('hidden', hide);
   }
 
-  tombol.addEventListener('click', () => {
+  button.addEventListener('click', () => {
     // play() mengembalikan Promise; kegagalannya ditangkap agar tidak
     // memunculkan pesan error di konsol ketika berkas video belum ada.
     video.play().catch(() => {
-      tombol.innerHTML =
+      button.innerHTML =
         '<span class="...">Berkas video belum tersedia</span>';
     });
   });
 
-  video.addEventListener('play', () => aturTombol(true));
-  video.addEventListener('pause', () => aturTombol(false));
-  video.addEventListener('ended', () => aturTombol(false));
+  video.addEventListener('play', () => toggleOverlay(true));
+  video.addEventListener('pause', () => toggleOverlay(false));
+  video.addEventListener('ended', () => toggleOverlay(false));
 }
 ```
 

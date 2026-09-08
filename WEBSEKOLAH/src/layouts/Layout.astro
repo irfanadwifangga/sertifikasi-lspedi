@@ -15,16 +15,16 @@ import '../styles/global.css';
 
 interface Props {
   /** Judul halaman, tampil di tab peramban dan mesin pencari. */
-  judul: string;
+  title: string;
   /** Ringkasan halaman untuk meta description. */
-  deskripsi?: string;
+  description?: string;
 }
 
-const { judul, deskripsi } = Astro.props;
+const { title, description } = Astro.props;
 const { identitas } = sekolah;
 
-const deskripsiFinal =
-  deskripsi ??
+const metaDescription =
+  description ??
   `${identitas.nama} — ${identitas.tagline}. Sekolah menengah kejuruan bidang teknologi di ${sekolah.kontak.kabupaten}, ${sekolah.kontak.provinsi}.`;
 ---
 
@@ -35,8 +35,8 @@ const deskripsiFinal =
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
 
-    <title>{judul} &middot; {identitas.namaSingkat}</title>
-    <meta name="description" content={deskripsiFinal} />
+    <title>{title} &middot; {identitas.namaSingkat}</title>
+    <meta name="description" content={metaDescription} />
 
     <link rel="icon" type="image/svg+xml" href="/img/logo.svg" />
 
@@ -50,8 +50,8 @@ const deskripsiFinal =
 
     <!-- Berbagi tautan ke media sosial -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content={`${judul} · ${identitas.namaSingkat}`} />
-    <meta property="og:description" content={deskripsiFinal} />
+    <meta property="og:title" content={`${title} · ${identitas.namaSingkat}`} />
+    <meta property="og:description" content={metaDescription} />
     <meta property="og:image" content="/img/hero.svg" />
   </head>
 
@@ -87,7 +87,7 @@ const deskripsiFinal =
        * saat masuk ke layar. Elemen yang ingin dianimasikan cukup diberi
        * atribut `data-aos` pada berkas halaman.
        */
-      function siapkanHalaman(): void {
+      function setupPage(): void {
         AOS.init({
           duration: 600,
           easing: 'ease-out-cubic',
@@ -95,25 +95,25 @@ const deskripsiFinal =
           offset: 60,
         });
 
-        const tombol = document.getElementById('ke-atas');
-        if (!tombol) return;
+        const backToTop = document.getElementById('ke-atas');
+        if (!backToTop) return;
 
         /** Menampilkan tombol hanya setelah halaman digulir cukup jauh. */
-        function perbaruiTombol(): void {
-          const tampil = window.scrollY > 420;
-          tombol!.classList.toggle('hidden', !tampil);
-          tombol!.classList.toggle('flex', tampil);
+        function updateBackToTop(): void {
+          const shouldShow = window.scrollY > 420;
+          backToTop!.classList.toggle('hidden', !shouldShow);
+          backToTop!.classList.toggle('flex', shouldShow);
         }
 
-        perbaruiTombol();
-        window.addEventListener('scroll', perbaruiTombol, { passive: true });
-        tombol.addEventListener('click', () => {
+        updateBackToTop();
+        window.addEventListener('scroll', updateBackToTop, { passive: true });
+        backToTop.addEventListener('click', () => {
           window.scrollTo({ top: 0, behavior: 'smooth' });
         });
       }
 
-      siapkanHalaman();
-      document.addEventListener('astro:page-load', siapkanHalaman);
+      setupPage();
+      document.addEventListener('astro:page-load', setupPage);
     </script>
   </body>
 </html>

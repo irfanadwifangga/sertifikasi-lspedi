@@ -97,7 +97,7 @@ await capture('/galeri/', 'Bukti Fitur/Penyaring Kategori Galeri.png', {
   before: async (p) => {
     await p.evaluate(() => {
       const button = [...document.querySelectorAll('.filter-galeri')]
-        .find((x) => x.dataset.kategori === 'Praktik');
+        .find((x) => x.dataset.category === 'Praktik');
       if (button) button.click();
     });
     await pause(500);
@@ -127,7 +127,7 @@ await capture('/berita/', 'Bukti Fitur/Pencarian Berita.png', {
 await capture('/ekstrakurikuler/', 'Bukti Fitur/Penyaring Ekstrakurikuler.png', {
   before: async (p) => {
     await p.evaluate(() => {
-      const button = [...document.querySelectorAll('.filter-ekskul')].filter((x) => x.dataset.kategori)[1];
+      const button = [...document.querySelectorAll('.filter-ekskul')].filter((x) => x.dataset.category)[1];
       if (button) button.click();
     });
     await pause(500);

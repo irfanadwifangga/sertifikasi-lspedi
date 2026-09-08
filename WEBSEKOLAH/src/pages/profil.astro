@@ -8,15 +8,15 @@
  * sehingga penambahan baris cukup dilakukan pada data.
  */
 import Layout from '../layouts/Layout.astro';
-import HeaderHalaman from '../components/HeaderHalaman.astro';
-import Judul from '../components/Judul.astro';
+import PageHeader from '../components/PageHeader.astro';
+import SectionTitle from '../components/SectionTitle.astro';
 
 import sekolah from '../data/sekolah.json';
 import { formatNumber } from '../utils/format';
 
 const { identitas, kontak, statistik, mutu, sarana, visi, misi, sejarah, prestasi } = sekolah;
 
-const totalSiswa = statistik.siswaLakiLaki + statistik.siswaPerempuan;
+const totalStudents = statistik.siswaLakiLaki + statistik.siswaPerempuan;
 
 /**
  * Isi Tabel Informasi Profil Sekolah.
@@ -24,54 +24,54 @@ const totalSiswa = statistik.siswaLakiLaki + statistik.siswaPerempuan;
  * Disusun sebagai array objek agar tabelnya dihasilkan lewat perulangan.
  * Inilah penerapan pemrograman terstruktur pada sisi tampilan.
  */
-const barisProfil = [
-  { label: 'Nama Sekolah', nilai: identitas.nama },
-  { label: 'NPSN', nilai: identitas.npsn },
-  { label: 'Bentuk Pendidikan', nilai: identitas.bentukPendidikan },
-  { label: 'Status Sekolah', nilai: identitas.statusSekolah },
-  { label: 'Akreditasi', nilai: identitas.akreditasi, sorot: true },
-  { label: 'Tahun Berdiri', nilai: String(identitas.tahunBerdiri) },
-  { label: 'Yayasan Penyelenggara', nilai: identitas.yayasan },
-  { label: 'Kurikulum', nilai: identitas.kurikulum },
-  { label: 'Waktu Penyelenggaraan', nilai: identitas.penyelenggaraan },
+const profileRows = [
+  { label: 'Nama Sekolah', value: identitas.nama },
+  { label: 'NPSN', value: identitas.npsn },
+  { label: 'Bentuk Pendidikan', value: identitas.bentukPendidikan },
+  { label: 'Status Sekolah', value: identitas.statusSekolah },
+  { label: 'Akreditasi', value: identitas.akreditasi, highlight: true },
+  { label: 'Tahun Berdiri', value: String(identitas.tahunBerdiri) },
+  { label: 'Yayasan Penyelenggara', value: identitas.yayasan },
+  { label: 'Kurikulum', value: identitas.kurikulum },
+  { label: 'Waktu Penyelenggaraan', value: identitas.penyelenggaraan },
   {
     label: 'Alamat',
-    nilai: `${kontak.alamat}, Kel. ${kontak.kelurahan}, Kec. ${kontak.kecamatan}, ${kontak.kabupaten}, ${kontak.provinsi} ${kontak.kodePos}`,
+    value: `${kontak.alamat}, Kel. ${kontak.kelurahan}, Kec. ${kontak.kecamatan}, ${kontak.kabupaten}, ${kontak.provinsi} ${kontak.kodePos}`,
   },
-  { label: 'Telepon', nilai: kontak.telepon },
-  { label: 'Surel', nilai: kontak.email },
-  { label: 'Jumlah Guru & Tenaga Pendidik', nilai: `${statistik.guru} orang` },
-  { label: 'Jumlah Tenaga Kependidikan', nilai: `${statistik.tenagaKependidikan} orang` },
+  { label: 'Telepon', value: kontak.telepon },
+  { label: 'Surel', value: kontak.email },
+  { label: 'Jumlah Guru & Tenaga Pendidik', value: `${statistik.guru} orang` },
+  { label: 'Jumlah Tenaga Kependidikan', value: `${statistik.tenagaKependidikan} orang` },
   {
     label: 'Jumlah Peserta Didik',
-    nilai: `${formatNumber(totalSiswa)} siswa (${statistik.siswaLakiLaki} putra, ${statistik.siswaPerempuan} putri)`,
-    sorot: true,
+    value: `${formatNumber(totalStudents)} siswa (${statistik.siswaLakiLaki} putra, ${statistik.siswaPerempuan} putri)`,
+    highlight: true,
   },
-  { label: 'Rombongan Belajar', nilai: `${statistik.rombonganBelajar} rombel` },
-  { label: 'Ruang Kelas', nilai: `${statistik.ruangKelas} ruang` },
-  { label: 'Laboratorium', nilai: `${statistik.laboratorium} ruang` },
-  { label: 'Perpustakaan', nilai: `${statistik.perpustakaan} ruang` },
-  { label: 'Luas Tanah', nilai: statistik.luasTanah },
-  { label: 'Akses Internet', nilai: sarana.aksesInternet },
-  { label: 'Sumber & Daya Listrik', nilai: `${sarana.sumberListrik} — ${sarana.dayaListrik}` },
+  { label: 'Rombongan Belajar', value: `${statistik.rombonganBelajar} rombel` },
+  { label: 'Ruang Kelas', value: `${statistik.ruangKelas} ruang` },
+  { label: 'Laboratorium', value: `${statistik.laboratorium} ruang` },
+  { label: 'Perpustakaan', value: `${statistik.perpustakaan} ruang` },
+  { label: 'Luas Tanah', value: statistik.luasTanah },
+  { label: 'Akses Internet', value: sarana.aksesInternet },
+  { label: 'Sumber & Daya Listrik', value: `${sarana.sumberListrik} — ${sarana.dayaListrik}` },
 ];
 
 /** Indikator mutu yang ditampilkan sebagai batang persentase. */
-const indikatorMutu = [
-  { label: 'Guru berkualifikasi S1/D4 ke atas', nilai: mutu.persentaseGuruKualifikasi },
-  { label: 'Guru bersertifikat pendidik', nilai: mutu.persentaseGuruSertifikasi },
-  { label: 'Lulusan terserap dunia kerja', nilai: mutu.persentaseLulusanBekerja },
+const qualityMetrics = [
+  { label: 'Guru berkualifikasi S1/D4 ke atas', value: mutu.persentaseGuruKualifikasi },
+  { label: 'Guru bersertifikat pendidik', value: mutu.persentaseGuruSertifikasi },
+  { label: 'Lulusan terserap dunia kerja', value: mutu.persentaseLulusanBekerja },
 ];
 ---
 
 <Layout
-  judul="Profil Sekolah"
-  deskripsi={`Profil lengkap ${identitas.nama}: visi misi, sejarah, data guru dan siswa, serta informasi akreditasi.`}
+  title="Profil Sekolah"
+  description={`Profil lengkap ${identitas.nama}: visi misi, sejarah, data guru dan siswa, serta informasi akreditasi.`}
 >
-  <HeaderHalaman
-    remah="Profil Sekolah"
-    judul="Profil Sekolah"
-    keterangan={`Informasi menyeluruh mengenai ${identitas.nama}, mulai dari visi dan misi, riwayat perkembangan, hingga data pokok sekolah pada semester ${identitas.semesterData}.`}
+  <PageHeader
+    breadcrumb="Profil Sekolah"
+    title="Profil Sekolah"
+    subtitle={`Informasi menyeluruh mengenai ${identitas.nama}, mulai dari visi dan misi, riwayat perkembangan, hingga data pokok sekolah pada semester ${identitas.semesterData}.`}
   />
 
   <!-- ================= VISI DAN MISI ================= -->
@@ -113,11 +113,11 @@ const indikatorMutu = [
   <!-- ================= TABEL INFORMASI PROFIL SEKOLAH ================= -->
   <section class="bg-navy-50 py-16 sm:py-24">
     <div class="wrap">
-      <Judul
-        tengah
-        label="Data Pokok"
-        judul="Tabel Informasi Profil Sekolah"
-        keterangan={`Data resmi sekolah pada semester ${identitas.semesterData}.`}
+      <SectionTitle
+        centered
+        eyebrow="Data Pokok"
+        title="Tabel Informasi Profil Sekolah"
+        subtitle={`Data resmi sekolah pada semester ${identitas.semesterData}.`}
       />
 
       <div class="mx-auto mt-12 max-w-4xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" data-aos="fade-up">
@@ -135,14 +135,14 @@ const indikatorMutu = [
 
             <tbody>
               {
-                barisProfil.map((baris, i) => (
+                profileRows.map((row, i) => (
                   <tr class={`border-t border-slate-100 ${i % 2 === 1 ? 'bg-slate-50/70' : ''}`}>
                     <td class="px-5 py-3 text-center text-slate-500">{i + 1}</td>
                     <th scope="row" class="px-5 py-3 font-semibold text-navy-900">
-                      {baris.label}
+                      {row.label}
                     </th>
-                    <td class={`px-5 py-3 ${baris.sorot ? 'font-bold text-amber-deep' : 'text-slate-700'}`}>
-                      {baris.nilai}
+                    <td class={`px-5 py-3 ${row.highlight ? 'font-bold text-amber-deep' : 'text-slate-700'}`}>
+                      {row.value}
                     </td>
                   </tr>
                 ))
@@ -158,26 +158,26 @@ const indikatorMutu = [
   <section class="py-16 sm:py-24">
     <div class="wrap grid gap-12 lg:grid-cols-2 lg:items-center">
       <div data-aos="fade-right">
-        <Judul
-          label="Mutu Pendidikan"
-          judul="Indikator Mutu Sekolah"
-          keterangan="Ukuran capaian sekolah yang diperbarui setiap semester sebagai bahan evaluasi bersama."
+        <SectionTitle
+          eyebrow="Mutu Pendidikan"
+          title="Indikator Mutu Sekolah"
+          subtitle="Ukuran capaian sekolah yang diperbarui setiap semester sebagai bahan evaluasi bersama."
         />
       </div>
 
       <div class="space-y-7" data-aos="fade-left">
         {
-          indikatorMutu.map((ind) => (
+          qualityMetrics.map((ind) => (
             <div>
               <div class="flex items-end justify-between">
                 <span class="text-[14.5px] font-semibold text-navy-900">{ind.label}</span>
-                <span class="font-display text-lg font-extrabold text-amber-deep">{ind.nilai}%</span>
+                <span class="font-display text-lg font-extrabold text-amber-deep">{ind.value}%</span>
               </div>
               <div class="mt-2 h-2.5 overflow-hidden rounded-full bg-slate-200">
                 <div
                   class="batang h-full rounded-full bg-gradient-to-r from-navy-600 to-amber-brand"
                   style={`width: 0%`}
-                  data-lebar={ind.nilai}
+                  data-width={ind.value}
                 />
               </div>
             </div>
@@ -190,11 +190,11 @@ const indikatorMutu = [
   <!-- ================= SEJARAH ================= -->
   <section class="bg-navy-50 py-16 sm:py-24">
     <div class="wrap">
-      <Judul
-        tengah
-        label="Perjalanan Kami"
-        judul="Sejarah Singkat Sekolah"
-        keterangan={`Tonggak penting sejak berdiri pada tahun ${identitas.tahunBerdiri}.`}
+      <SectionTitle
+        centered
+        eyebrow="Perjalanan Kami"
+        title="Sejarah Singkat Sekolah"
+        subtitle={`Tonggak penting sejak berdiri pada tahun ${identitas.tahunBerdiri}.`}
       />
 
       <ol class="relative mx-auto mt-12 max-w-3xl border-l-2 border-navy-200 pl-8">
@@ -214,7 +214,7 @@ const indikatorMutu = [
   <!-- ================= PRESTASI ================= -->
   <section class="py-16 sm:py-24">
     <div class="wrap">
-      <Judul tengah label="Capaian" judul="Prestasi Sekolah" />
+      <SectionTitle centered eyebrow="Capaian" title="Prestasi Sekolah" />
 
       <div class="mt-12 grid gap-5 sm:grid-cols-2">
         {
@@ -246,30 +246,30 @@ const indikatorMutu = [
    * Animasi dimulai hanya ketika batang terlihat di layar, memakai
    * IntersectionObserver.
    */
-  function siapkanBatangMutu(): void {
-    const semuaBatang = document.querySelectorAll<HTMLElement>('.batang');
-    if (semuaBatang.length === 0) return;
+  function setupQualityBars(): void {
+    const bars = document.querySelectorAll<HTMLElement>('.batang');
+    if (bars.length === 0) return;
 
-    const pengamat = new IntersectionObserver(
-      (entri) => {
-        for (const e of entri) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
           if (!e.isIntersecting) continue;
 
-          const batang = e.target as HTMLElement;
-          const lebar = Number(batang.dataset.lebar ?? 0);
+          const bar = e.target as HTMLElement;
+          const width = Number(bar.dataset.width ?? 0);
 
-          batang.style.transition = 'width 1.1s cubic-bezier(.2,.7,.3,1)';
-          batang.style.width = `${lebar}%`;
+          bar.style.transition = 'width 1.1s cubic-bezier(.2,.7,.3,1)';
+          bar.style.width = `${width}%`;
 
-          pengamat.unobserve(batang);
+          observer.unobserve(bar);
         }
       },
       { threshold: 0.5 },
     );
 
-    semuaBatang.forEach((b) => pengamat.observe(b));
+    bars.forEach((b) => observer.observe(b));
   }
 
-  siapkanBatangMutu();
-  document.addEventListener('astro:page-load', siapkanBatangMutu);
+  setupQualityBars();
+  document.addEventListener('astro:page-load', setupQualityBars);
 </script>

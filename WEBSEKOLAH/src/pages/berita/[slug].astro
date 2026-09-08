@@ -7,7 +7,7 @@
  * otomatis menghasilkan satu halaman baru, tanpa membuat berkas baru.
  */
 import Layout from '../../layouts/Layout.astro';
-import KartuBerita from '../../components/KartuBerita.astro';
+import NewsCard from '../../components/NewsCard.astro';
 
 import semuaBerita from '../../data/berita.json';
 import { formatDate, sortByNewest } from '../../utils/format';
@@ -23,12 +23,12 @@ export function getStaticPaths() {
 const { berita } = Astro.props;
 
 /** Tiga berita lain sebagai bacaan lanjutan. */
-const beritaLain = sortByNewest(semuaBerita)
+const otherNews = sortByNewest(semuaBerita)
   .filter((b) => b.slug !== berita.slug)
   .slice(0, 3);
 ---
 
-<Layout judul={berita.judul} deskripsi={berita.ringkasan}>
+<Layout title={berita.judul} description={berita.ringkasan}>
   <article>
     <!-- Kepala berita -->
     <header class="relative overflow-hidden bg-navy-900 pb-14 pt-28 sm:pb-20 sm:pt-36">
@@ -123,7 +123,7 @@ const beritaLain = sortByNewest(semuaBerita)
       <h2 class="rule font-display text-2xl font-extrabold text-navy-900 sm:text-3xl">Berita Lainnya</h2>
 
       <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {beritaLain.map((b, i) => <KartuBerita berita={b} urutan={i} />)}
+        {otherNews.map((b, i) => <NewsCard news={b} index={i} />)}
       </div>
     </div>
   </section>

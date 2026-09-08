@@ -1,6 +1,6 @@
 ---
 /**
- * VideoProfil — bagian multimedia halaman utama.
+ * ProfileVideo — bagian multimedia halaman utama.
  *
  * Komponen ini adalah bukti unit "menerapkan perintah eksekusi bahasa
  * pemrograman berbasis teks, grafik, dan MULTIMEDIA": elemen <video> beserta
@@ -9,7 +9,7 @@
  * Bila berkasnya belum tersedia, pemutar tetap tampil rapi dengan gambar
  * poster dan keterangan, sehingga tampilan situs tidak rusak.
  */
-const daftarSorot = [
+const highlights = [
   'Fasilitas bengkel praktik sesuai standar industri',
   'Pembelajaran berbasis proyek dan teaching factory',
   'Kemitraan dengan 24 perusahaan mitra',
@@ -62,14 +62,14 @@ const daftarSorot = [
 
       <ul class="mt-7 space-y-3.5">
         {
-          daftarSorot.map((teks) => (
+          highlights.map((text) => (
             <li class="flex gap-3">
               <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="m5 13 4 4L19 7" />
                 </svg>
               </span>
-              <span class="text-[15px] text-slate-700">{teks}</span>
+              <span class="text-[15px] text-slate-700">{text}</span>
             </li>
           ))
         }
@@ -85,31 +85,31 @@ const daftarSorot = [
    * Tombol disembunyikan saat video berjalan dan ditampilkan lagi ketika
    * video dijeda atau selesai, sehingga tampilannya selalu sesuai keadaan.
    */
-  function siapkanVideo(): void {
+  function setupVideo(): void {
     const video = document.getElementById('video-profil') as HTMLVideoElement | null;
-    const tombol = document.getElementById('tombol-putar');
+    const button = document.getElementById('tombol-putar');
 
-    if (!video || !tombol) return;
+    if (!video || !button) return;
 
     /** Menyembunyikan atau menampilkan tombol putar. */
-    function aturTombol(sembunyikan: boolean): void {
-      tombol!.classList.toggle('hidden', sembunyikan);
+    function toggleOverlay(hide: boolean): void {
+      button!.classList.toggle('hidden', hide);
     }
 
-    tombol.addEventListener('click', () => {
+    button.addEventListener('click', () => {
       // play() mengembalikan Promise; kegagalannya ditangkap agar tidak
       // memunculkan pesan error di konsol ketika berkas video belum ada.
       video.play().catch(() => {
-        tombol.innerHTML =
+        button.innerHTML =
           '<span class="rounded-lg bg-white/95 px-4 py-2.5 text-sm font-semibold text-navy-900">Berkas video belum tersedia</span>';
       });
     });
 
-    video.addEventListener('play', () => aturTombol(true));
-    video.addEventListener('pause', () => aturTombol(false));
-    video.addEventListener('ended', () => aturTombol(false));
+    video.addEventListener('play', () => toggleOverlay(true));
+    video.addEventListener('pause', () => toggleOverlay(false));
+    video.addEventListener('ended', () => toggleOverlay(false));
   }
 
-  siapkanVideo();
-  document.addEventListener('astro:page-load', siapkanVideo);
+  setupVideo();
+  document.addEventListener('astro:page-load', setupVideo);
 </script>

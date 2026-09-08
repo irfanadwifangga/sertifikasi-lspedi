@@ -43,11 +43,11 @@ src/
 ├─ components/       bagian yang dipakai berulang
 │  ├─ Navbar.astro             Menu utama interaktif
 │  ├─ Footer.astro
-│  ├─ HeaderHalaman.astro      Kepala halaman + remah roti
-│  ├─ Judul.astro              Kepala tiap bagian
-│  ├─ KartuBerita.astro
-│  ├─ Statistik.astro          Angka guru/siswa + grafik Chart.js
-│  └─ VideoProfil.astro        Pemutar video profil
+│  ├─ PageHeader.astro         Kepala halaman + remah roti
+│  ├─ SectionTitle.astro       Kepala tiap bagian
+│  ├─ NewsCard.astro
+│  ├─ Statistics.astro         Angka guru/siswa + grafik Chart.js
+│  └─ ProfileVideo.astro       Pemutar video profil
 ├─ layouts/
 │  └─ Layout.astro             Kerangka bersama seluruh halaman
 ├─ data/             seluruh isi situs, terpisah dari kode
@@ -96,7 +96,7 @@ src/
 | Kode Unit | Judul | Bukti dalam kode |
 |---|---|---|
 | J.620100.005.02 | Mengimplementasikan user interface | Navbar responsif, penyaring kategori, lightbox, animasi gulir, validasi form |
-| J.620100.010.01 | Perintah eksekusi berbasis teks, grafik, dan multimedia | Teks dari JSON; grafik Chart.js pada `<canvas>` dan ilustrasi SVG; multimedia lewat `<video>` di `VideoProfil.astro` |
+| J.620100.010.01 | Perintah eksekusi berbasis teks, grafik, dan multimedia | Teks dari JSON; grafik Chart.js pada `<canvas>` dan ilustrasi SVG; multimedia lewat `<video>` di `ProfileVideo.astro` |
 | J.620100.015.01 | Menyusun fungsi/berkas dalam organisasi yang rapi | Pemisahan `pages` / `components` / `layouts` / `data` / `utils` / `styles` |
 | J.620100.016.01 | Menulis kode sesuai guidelines dan best practices | Penamaan konsisten, komentar TSDoc, gambar diberi `alt`, `<table>` memakai `scope`, animasi menghormati `prefers-reduced-motion` |
 | J.620100.017.02 | Mengimplementasikan pemrograman terstruktur | Fungsi murni di `utils/format.ts`; perulangan `map` untuk tabel, kartu, dan menu |

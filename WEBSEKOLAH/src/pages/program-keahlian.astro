@@ -7,15 +7,15 @@
  * dipakai di sini.
  */
 import Layout from '../layouts/Layout.astro';
-import HeaderHalaman from '../components/HeaderHalaman.astro';
-import Judul from '../components/Judul.astro';
+import PageHeader from '../components/PageHeader.astro';
+import SectionTitle from '../components/SectionTitle.astro';
 
 import sekolah from '../data/sekolah.json';
 
 const { programKeahlian, statistik } = sekolah;
 
 /** Rincian kompetensi dan prospek kerja, dikaitkan lewat singkatan program. */
-const rincian: Record<string, { kompetensi: string[]; prospek: string[] }> = {
+const details: Record<string, { kompetensi: string[]; prospek: string[] }> = {
   TKRO: {
     kompetensi: [
       'Perawatan berkala mesin kendaraan ringan',
@@ -48,13 +48,13 @@ const rincian: Record<string, { kompetensi: string[]; prospek: string[] }> = {
   },
 };
 
-const ikon: Record<string, string> = {
+const icon: Record<string, string> = {
   wrench: 'M14.7 6.3a4 4 0 0 1-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 0 1 5.4-5.4l-2.5 2.5 2.1 2.1z',
   bike: 'M6 14a4 4 0 1 0 4 4 4 4 0 0 0-4-4zm12 0a4 4 0 1 0 4 4 4 4 0 0 0-4-4zM9 8h6l3 6M9 8 6 14',
   chip: 'M8 8h8v8H8zM4 9h2v2H4zm0 4h2v2H4zm14-4h2v2h-2zm0 4h2v2h-2zM9 4h2v2H9zm4 0h2v2h-2zM9 18h2v2H9zm4 0h2v2h-2z',
 };
 
-const gradasi: Record<string, string> = {
+const gradient: Record<string, string> = {
   blue: 'from-sky-500 to-blue-700',
   orange: 'from-amber-500 to-orange-700',
   violet: 'from-violet-500 to-purple-700',
@@ -62,32 +62,32 @@ const gradasi: Record<string, string> = {
 ---
 
 <Layout
-  judul="Program Keahlian"
-  deskripsi="Tiga program keahlian bidang teknologi yang dirancang mengikuti kebutuhan dunia usaha dan dunia industri."
+  title="Program Keahlian"
+  description="Tiga program keahlian bidang teknologi yang dirancang mengikuti kebutuhan dunia usaha dan dunia industri."
 >
-  <HeaderHalaman
-    remah="Program Keahlian"
-    judul="Program Keahlian"
-    keterangan={`Tiga program keahlian dengan total ${statistik.rombonganBelajar} rombongan belajar, seluruhnya dirancang mengikuti kebutuhan dunia usaha dan dunia industri.`}
+  <PageHeader
+    breadcrumb="Program Keahlian"
+    title="Program Keahlian"
+    subtitle={`Tiga program keahlian dengan total ${statistik.rombonganBelajar} rombongan belajar, seluruhnya dirancang mengikuti kebutuhan dunia usaha dan dunia industri.`}
   />
 
   <section class="py-16 sm:py-24">
     <div class="wrap space-y-16">
       {
         programKeahlian.map((p, i) => {
-          const detail = rincian[p.singkatan];
-          const terbalik = i % 2 === 1;
+          const detail = details[p.singkatan];
+          const reversed = i % 2 === 1;
 
           return (
             <article
-              class={`grid gap-10 lg:grid-cols-2 lg:items-center ${terbalik ? 'lg:[&>*:first-child]:order-2' : ''}`}
+              class={`grid gap-10 lg:grid-cols-2 lg:items-center ${reversed ? 'lg:[&>*:first-child]:order-2' : ''}`}
               data-aos="fade-up"
             >
               {/* Kartu identitas program */}
-              <div class={`rounded-2xl bg-gradient-to-br ${gradasi[p.warna]} p-8 text-white sm:p-10`}>
+              <div class={`rounded-2xl bg-gradient-to-br ${gradient[p.warna]} p-8 text-white sm:p-10`}>
                 <div class="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm">
                   <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
-                    <path d={ikon[p.ikon]} />
+                    <path d={icon[p.ikon]} />
                   </svg>
                 </div>
 
@@ -141,10 +141,10 @@ const gradasi: Record<string, string> = {
 
   <section class="bg-navy-50 py-16">
     <div class="wrap text-center">
-      <Judul
-        tengah
-        judul="Tertarik bergabung?"
-        keterangan="Hubungi panitia penerimaan peserta didik baru untuk informasi jadwal dan persyaratan."
+      <SectionTitle
+        centered
+        title="Tertarik bergabung?"
+        subtitle="Hubungi panitia penerimaan peserta didik baru untuk informasi jadwal dan persyaratan."
       />
       <div class="mt-8">
         <a href="/kontak" class="btn bg-navy-800 text-white hover:bg-navy-600">Hubungi Kami</a>

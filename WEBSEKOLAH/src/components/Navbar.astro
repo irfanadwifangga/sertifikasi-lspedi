@@ -199,51 +199,51 @@ const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWit
    * Dibungkus dalam satu fungsi agar tidak mencemari lingkup global, dan
    * dijalankan ulang pada setiap perpindahan halaman.
    */
-  function siapkanNavbar(): void {
+  function setupNavbar(): void {
     const navbar = document.getElementById('navbar');
     const toggle = document.getElementById('menu-toggle');
     const panel = document.getElementById('menu-mobile');
-    const ikonBuka = document.getElementById('icon-open');
-    const ikonTutup = document.getElementById('icon-close');
+    const openIcon = document.getElementById('icon-open');
+    const closeIcon = document.getElementById('icon-close');
 
-    if (!navbar || !toggle || !panel || !ikonBuka || !ikonTutup) return;
+    if (!navbar || !toggle || !panel || !openIcon || !closeIcon) return;
 
     // Halaman selain beranda tidak punya gambar sampul, sehingga navbar
     // harus langsung solid agar tulisannya terbaca.
-    const diBeranda = (window.location.pathname.replace(/\/+$/, '') || '/') === '/';
-    if (!diBeranda) navbar.classList.add('solid');
+    const onHome = (window.location.pathname.replace(/\/+$/, '') || '/') === '/';
+    if (!onHome) navbar.classList.add('solid');
 
     /** Menambah latar solid begitu halaman digulir melewati 20 piksel. */
-    function perbaruiLatar(): void {
-      if (!diBeranda) return;
+    function updateBackground(): void {
+      if (!onHome) return;
       navbar!.classList.toggle('scrolled', window.scrollY > 20);
     }
 
     /** Membuka atau menutup panel menu pada layar sempit. */
-    function alihkanMenu(): void {
-      const terbuka = !panel!.classList.contains('hidden');
-      panel!.classList.toggle('hidden', terbuka);
-      ikonBuka!.classList.toggle('hidden', !terbuka);
-      ikonTutup!.classList.toggle('hidden', terbuka);
-      toggle!.setAttribute('aria-expanded', String(!terbuka));
+    function toggleMenu(): void {
+      const isOpen = !panel!.classList.contains('hidden');
+      panel!.classList.toggle('hidden', isOpen);
+      openIcon!.classList.toggle('hidden', !isOpen);
+      closeIcon!.classList.toggle('hidden', isOpen);
+      toggle!.setAttribute('aria-expanded', String(!isOpen));
 
       // Saat panel terbuka, navbar wajib solid agar menu terbaca.
-      if (!terbuka) navbar!.classList.add('scrolled');
-      else perbaruiLatar();
+      if (!isOpen) navbar!.classList.add('scrolled');
+      else updateBackground();
     }
 
-    perbaruiLatar();
-    window.addEventListener('scroll', perbaruiLatar, { passive: true });
-    toggle.addEventListener('click', alihkanMenu);
+    updateBackground();
+    window.addEventListener('scroll', updateBackground, { passive: true });
+    toggle.addEventListener('click', toggleMenu);
 
     // Tutup panel bila layar dilebarkan kembali.
     window.addEventListener('resize', () => {
       if (window.innerWidth >= 1024 && !panel.classList.contains('hidden')) {
-        alihkanMenu();
+        toggleMenu();
       }
     });
   }
 
-  siapkanNavbar();
-  document.addEventListener('astro:page-load', siapkanNavbar);
+  setupNavbar();
+  document.addEventListener('astro:page-load', setupNavbar);
 </script>

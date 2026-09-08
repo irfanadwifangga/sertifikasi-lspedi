@@ -1,6 +1,6 @@
 ---
 /**
- * Statistik — bagian "informasi jumlah guru dan siswa" pada halaman utama.
+ * Statistics — bagian "informasi jumlah guru dan siswa" pada halaman utama.
  *
  * Bagian ini memenuhi dua unit sekaligus:
  *  - Angka yang menghitung naik saat masuk layar (user interface interaktif).
@@ -11,17 +11,17 @@ import sekolah from '../data/sekolah.json';
 import { formatNumber } from '../utils/format';
 
 const { statistik, mutu } = sekolah;
-const totalSiswa = statistik.siswaLakiLaki + statistik.siswaPerempuan;
+const totalStudents = statistik.siswaLakiLaki + statistik.siswaPerempuan;
 
 /** Kartu angka utama. Ditulis sebagai array agar mudah ditambah. */
-const kartu = [
-  { label: 'Guru & Tenaga Pendidik', nilai: statistik.guru, ikon: 'guru', warna: 'text-sky-300' },
-  { label: 'Peserta Didik', nilai: totalSiswa, ikon: 'siswa', warna: 'text-amber-brand' },
-  { label: 'Rombongan Belajar', nilai: statistik.rombonganBelajar, ikon: 'kelas', warna: 'text-emerald-300' },
-  { label: 'Mitra Industri', nilai: mutu.mitraIndustri, ikon: 'mitra', warna: 'text-violet-300' },
+const cards = [
+  { label: 'Guru & Tenaga Pendidik', value: statistik.guru, ikon: 'guru', warna: 'text-sky-300' },
+  { label: 'Peserta Didik', value: totalStudents, ikon: 'siswa', warna: 'text-amber-brand' },
+  { label: 'Rombongan Belajar', value: statistik.rombonganBelajar, ikon: 'kelas', warna: 'text-emerald-300' },
+  { label: 'Mitra Industri', value: mutu.mitraIndustri, ikon: 'mitra', warna: 'text-violet-300' },
 ];
 
-const ikon: Record<string, string> = {
+const icon: Record<string, string> = {
   guru: 'M12 3 2 8l10 5 10-5zM4 12v5c0 1.7 3.6 3 8 3s8-1.3 8-3v-5l-8 4z',
   siswa: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm8 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM2 21a7 7 0 0 1 14 0zm14.5 0a8.5 8.5 0 0 0-1.7-5A5 5 0 0 1 22 21z',
   kelas: 'M3 5h18v11H3zm2 13h14v2H5zM7 8h10v2H7zm0 3h6v2H7z',
@@ -36,7 +36,7 @@ const ikon: Record<string, string> = {
 
   <div class="wrap relative">
     <div class="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-      <!-- Kolom kiri: kartu angka -->
+      <!-- Kolom kiri: cards angka -->
       <div>
         <span class="eyebrow text-amber-brand">Sekolah dalam Angka</span>
         <h2 class="rule mt-2 font-display text-3xl font-extrabold text-white sm:text-4xl">
@@ -50,18 +50,18 @@ const ikon: Record<string, string> = {
 
         <div class="mt-9 grid grid-cols-2 gap-4 sm:gap-5">
           {
-            kartu.map((k, i) => (
+            cards.map((k, i) => (
               <div
                 class="rounded-2xl border border-white/12 bg-white/6 p-5 backdrop-blur-sm"
                 data-aos="fade-up"
                 data-aos-delay={i * 90}
               >
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" class={k.warna}>
-                  <path d={ikon[k.ikon]} />
+                  <path d={icon[k.ikon]} />
                 </svg>
                 <p
                   class="angka mt-3 font-display text-3xl font-extrabold text-white sm:text-4xl"
-                  data-nilai={k.nilai}
+                  data-value={k.value}
                 >
                   0
                 </p>
@@ -79,14 +79,14 @@ const ikon: Record<string, string> = {
       >
         <h3 class="font-display text-lg font-bold text-white">Komposisi Peserta Didik</h3>
         <p class="mt-1 text-[13px] text-navy-200">
-          Total {formatNumber(totalSiswa)} peserta didik pada {statistik.rombonganBelajar} rombongan belajar.
+          Total {formatNumber(totalStudents)} peserta didik pada {statistik.rombonganBelajar} rombongan belajar.
         </p>
 
         <div class="relative mx-auto mt-6 h-[260px]">
           <canvas
             id="grafik-siswa"
-            data-laki={statistik.siswaLakiLaki}
-            data-perempuan={statistik.siswaPerempuan}></canvas>
+            data-male={statistik.siswaLakiLaki}
+            data-female={statistik.siswaPerempuan}></canvas>
         </div>
 
         <dl class="mt-6 grid grid-cols-2 gap-4 border-t border-white/12 pt-5 text-center">
@@ -114,66 +114,66 @@ const ikon: Record<string, string> = {
    * memakai IntersectionObserver. Cara ini menghemat pekerjaan peramban
    * sekaligus membuat animasinya terlihat oleh pengguna.
    */
-  function siapkanStatistik(): void {
+  function setupStatistics(): void {
     // ---------- Angka yang menghitung naik ----------
-    const angkaSemua = document.querySelectorAll<HTMLElement>('.angka');
+    const counters = document.querySelectorAll<HTMLElement>('.angka');
 
     /**
      * Menghitung angka dari nol sampai nilai tujuan.
      *
-     * @param elemen Elemen tempat angka ditampilkan.
+     * @param element Elemen tempat angka ditampilkan.
      */
-    function hitungNaik(elemen: HTMLElement): void {
-      const tujuan = Number(elemen.dataset.nilai ?? 0);
-      const durasi = 1400;
-      const mulai = performance.now();
+    function countUp(element: HTMLElement): void {
+      const target = Number(element.dataset.value ?? 0);
+      const duration = 1400;
+      const start = performance.now();
 
-      function langkah(waktu: number): void {
-        const maju = Math.min((waktu - mulai) / durasi, 1);
+      function step(now: number): void {
+        const progress = Math.min((now - start) / duration, 1);
         // Perlambatan di akhir agar terasa halus.
-        const mulus = 1 - Math.pow(1 - maju, 3);
-        elemen.textContent = Math.round(tujuan * mulus).toLocaleString('id-ID');
+        const eased = 1 - Math.pow(1 - progress, 3);
+        element.textContent = Math.round(target * eased).toLocaleString('id-ID');
 
-        if (maju < 1) requestAnimationFrame(langkah);
+        if (progress < 1) requestAnimationFrame(step);
       }
 
-      requestAnimationFrame(langkah);
+      requestAnimationFrame(step);
     }
 
-    if (angkaSemua.length > 0) {
-      const pengamat = new IntersectionObserver(
-        (entri) => {
-          for (const e of entri) {
+    if (counters.length > 0) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
             if (!e.isIntersecting) continue;
-            hitungNaik(e.target as HTMLElement);
-            pengamat.unobserve(e.target);
+            countUp(e.target as HTMLElement);
+            observer.unobserve(e.target);
           }
         },
         { threshold: 0.4 },
       );
 
-      angkaSemua.forEach((el) => pengamat.observe(el));
+      counters.forEach((el) => observer.observe(el));
     }
 
     // ---------- Grafik lingkaran ----------
-    const kanvas = document.getElementById('grafik-siswa') as HTMLCanvasElement | null;
-    if (!kanvas) return;
+    const canvas = document.getElementById('grafik-siswa') as HTMLCanvasElement | null;
+    if (!canvas) return;
 
-    const laki = Number(kanvas.dataset.laki ?? 0);
-    const perempuan = Number(kanvas.dataset.perempuan ?? 0);
+    const male = Number(canvas.dataset.male ?? 0);
+    const female = Number(canvas.dataset.female ?? 0);
 
-    const pengamatGrafik = new IntersectionObserver(
-      (entri) => {
-        for (const e of entri) {
+    const chartObserver = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
           if (!e.isIntersecting) continue;
 
-          new Chart(kanvas, {
+          new Chart(canvas, {
             type: 'doughnut',
             data: {
               labels: ['Laki-laki', 'Perempuan'],
               datasets: [
                 {
-                  data: [laki, perempuan],
+                  data: [male, female],
                   backgroundColor: ['#38bdf8', '#f5a524'],
                   borderWidth: 0,
                   hoverOffset: 10,
@@ -196,11 +196,11 @@ const ikon: Record<string, string> = {
                 },
                 tooltip: {
                   callbacks: {
-                    label: (konteks) => {
-                      const nilai = konteks.parsed as number;
-                      const total = laki + perempuan;
-                      const persen = ((nilai / total) * 100).toFixed(1);
-                      return ` ${konteks.label}: ${nilai} siswa (${persen}%)`;
+                    label: (ctx) => {
+                      const value = ctx.parsed as number;
+                      const total = male + female;
+                      const percent = ((value / total) * 100).toFixed(1);
+                      return ` ${ctx.label}: ${value} siswa (${percent}%)`;
                     },
                   },
                 },
@@ -208,15 +208,15 @@ const ikon: Record<string, string> = {
             },
           });
 
-          pengamatGrafik.unobserve(e.target);
+          chartObserver.unobserve(e.target);
         }
       },
       { threshold: 0.3 },
     );
 
-    pengamatGrafik.observe(kanvas);
+    chartObserver.observe(canvas);
   }
 
-  siapkanStatistik();
-  document.addEventListener('astro:page-load', siapkanStatistik);
+  setupStatistics();
+  document.addEventListener('astro:page-load', setupStatistics);
 </script>

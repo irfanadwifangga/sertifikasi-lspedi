@@ -1,6 +1,6 @@
 ---
 /**
- * KartuBerita — satu kartu berita kegiatan sekolah.
+ * NewsCard — satu kartu berita kegiatan sekolah.
  *
  * Dipakai berulang di halaman Beranda maupun halaman Berita. Karena bentuknya
  * komponen, penambahan berita cukup dilakukan di `src/data/berita.json`
@@ -9,7 +9,8 @@
 import { formatDate, truncateText } from '../utils/format';
 
 interface Props {
-  berita: {
+  /** Satu entri dari berita.json. Nama bidangnya mengikuti berkas data. */
+  news: {
     slug: string;
     judul: string;
     tanggal: string;
@@ -19,13 +20,13 @@ interface Props {
     penulis: string;
   };
   /** Nomor urut, dipakai untuk menunda animasi agar kartu muncul berurutan. */
-  urutan?: number;
+  index?: number;
 }
 
-const { berita, urutan = 0 } = Astro.props;
+const { news, index = 0 } = Astro.props;
 
 /** Warna lencana disesuaikan dengan kategori beritanya. */
-const warnaKategori: Record<string, string> = {
+const categoryBadge: Record<string, string> = {
   Prestasi: 'bg-amber-100 text-amber-800',
   Akademik: 'bg-violet-100 text-violet-800',
   Kesiswaan: 'bg-sky-100 text-sky-800',
@@ -33,48 +34,48 @@ const warnaKategori: Record<string, string> = {
   Pengumuman: 'bg-emerald-100 text-emerald-800',
 };
 
-const kelasLencana = warnaKategori[berita.kategori] ?? 'bg-slate-100 text-slate-700';
+const badgeClass = categoryBadge[news.kategori] ?? 'bg-slate-100 text-slate-700';
 
 /** Ringkasan dipangkas agar tinggi seluruh kartu dalam satu baris tetap sama. */
-const ringkasanKartu = truncateText(berita.ringkasan, 118);
+const summary = truncateText(news.ringkasan, 118);
 ---
 
 <article
   class="card card-hover flex flex-col"
   data-aos="fade-up"
-  data-aos-delay={urutan * 80}
+  data-aos-delay={index * 80}
 >
   <div class="relative aspect-[3/2] overflow-hidden bg-navy-100">
     <img
-      src={berita.gambar}
-      alt={berita.judul}
+      src={news.gambar}
+      alt={news.judul}
       width="1200"
       height="800"
       loading="lazy"
       class="h-full! w-full object-cover transition-transform duration-500 hover:scale-105"
     />
-    <span class={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-[11px] font-bold ${kelasLencana}`}>
-      {berita.kategori}
+    <span class={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-[11px] font-bold ${badgeClass}`}>
+      {news.kategori}
     </span>
   </div>
 
   <div class="flex flex-1 flex-col p-5">
-    <time datetime={berita.tanggal} class="text-xs font-semibold text-slate-500">
-      {formatDate(berita.tanggal)}
+    <time datetime={news.tanggal} class="text-xs font-semibold text-slate-500">
+      {formatDate(news.tanggal)}
     </time>
 
     <h3 class="mt-2 font-display text-[17px] font-bold leading-snug text-navy-900">
-      {berita.judul}
+      {news.judul}
     </h3>
 
     <p class="mt-2.5 flex-1 text-sm leading-relaxed text-slate-600">
-      {ringkasanKartu}
+      {summary}
     </p>
 
     <div class="mt-4 flex items-center justify-between border-t border-slate-100 pt-3.5">
-      <span class="text-xs text-slate-500">{berita.penulis}</span>
+      <span class="text-xs text-slate-500">{news.penulis}</span>
       <a
-        href={`/berita/${berita.slug}`}
+        href={`/berita/${news.slug}`}
         class="inline-flex items-center gap-1 text-sm font-semibold text-navy-600 transition-colors hover:text-amber-deep"
       >
         Baca selengkapnya

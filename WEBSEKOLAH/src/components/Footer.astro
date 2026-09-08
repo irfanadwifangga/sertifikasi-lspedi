@@ -9,7 +9,7 @@ import sekolah from '../data/sekolah.json';
 
 const { identitas, kontak, statistik } = sekolah;
 
-const tautanCepat = [
+const quickLinks = [
   { label: 'Profil Sekolah', href: '/profil' },
   { label: 'Program Keahlian', href: '/program-keahlian' },
   { label: 'Ekstrakurikuler', href: '/ekstrakurikuler' },
@@ -18,8 +18,8 @@ const tautanCepat = [
   { label: 'Kontak', href: '/kontak' },
 ];
 
-const totalSiswa = statistik.siswaLakiLaki + statistik.siswaPerempuan;
-const tahunSekarang = new Date().getFullYear();
+const totalStudents = statistik.siswaLakiLaki + statistik.siswaPerempuan;
+const currentYear = new Date().getFullYear();
 ---
 
 <footer class="bg-navy-900 text-navy-100">
@@ -43,7 +43,7 @@ const tahunSekarang = new Date().getFullYear();
       </div>
       <p class="mt-4 text-sm leading-relaxed text-navy-200">
         Sekolah menengah kejuruan bidang teknologi yang berdiri sejak {identitas.tahunBerdiri},
-        dengan {statistik.guru} guru dan {totalSiswa} peserta didik.
+        dengan {statistik.guru} guru dan {totalStudents} peserta didik.
       </p>
     </div>
 
@@ -52,7 +52,7 @@ const tahunSekarang = new Date().getFullYear();
       <h3 class="mb-4 font-display text-sm font-bold uppercase tracking-wider text-white">Tautan Cepat</h3>
       <ul class="space-y-2.5 text-sm">
         {
-          tautanCepat.map((t) => (
+          quickLinks.map((t) => (
             <li>
               <a href={t.href} class="text-navy-200 transition-colors hover:text-amber-brand">
                 {t.label}
@@ -102,7 +102,7 @@ const tahunSekarang = new Date().getFullYear();
 
   <div class="border-t border-white/10">
     <div class="wrap flex flex-col items-center justify-between gap-2 py-5 text-center text-xs text-navy-200 sm:flex-row sm:text-left">
-      <p>&copy; {tahunSekarang} {identitas.nama}. Seluruh hak cipta dilindungi.</p>
+      <p>&copy; {currentYear} {identitas.nama}. Seluruh hak cipta dilindungi.</p>
       <p>Data pada situs ini bersifat fiktif, dibuat untuk keperluan Tugas Praktik Demonstrasi.</p>
     </div>
   </div>

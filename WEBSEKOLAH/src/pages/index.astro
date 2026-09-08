@@ -9,10 +9,10 @@
  *  - Informasi jumlah guru dan siswa
  */
 import Layout from '../layouts/Layout.astro';
-import Judul from '../components/Judul.astro';
-import KartuBerita from '../components/KartuBerita.astro';
-import Statistik from '../components/Statistik.astro';
-import VideoProfil from '../components/VideoProfil.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+import NewsCard from '../components/NewsCard.astro';
+import Statistics from '../components/Statistics.astro';
+import ProfileVideo from '../components/ProfileVideo.astro';
 
 import sekolah from '../data/sekolah.json';
 import semuaBerita from '../data/berita.json';
@@ -23,43 +23,43 @@ import { sortByNewest } from '../utils/format';
 const { identitas, sambutan, programKeahlian, statistik } = sekolah;
 
 /** Tiga berita terbaru untuk halaman utama. */
-const beritaTerbaru = sortByNewest(semuaBerita).slice(0, 3);
+const latestNews = sortByNewest(semuaBerita).slice(0, 3);
 
 /** Enam foto pertama sebagai cuplikan galeri. */
-const cuplikanGaleri = galeri.slice(0, 6);
+const gallerySnippet = galeri.slice(0, 6);
 
-const totalSiswa = statistik.siswaLakiLaki + statistik.siswaPerempuan;
+const totalStudents = statistik.siswaLakiLaki + statistik.siswaPerempuan;
 
 /** Gambar sampul yang bergantian pada bagian hero. */
-const slideHero = [
-  { gambar: '/img/hero.svg', judul: 'Terampil, Berkarakter, Siap Kerja', teks: `Sekolah menengah kejuruan bidang teknologi di ${sekolah.kontak.kabupaten}, berdiri sejak ${identitas.tahunBerdiri}.` },
-  { gambar: '/img/galeri-bengkel.svg', judul: 'Belajar Langsung di Bengkel', teks: 'Praktik dilakukan pada bengkel sekolah dengan peralatan sesuai standar industri.' },
-  { gambar: '/img/galeri-lks.svg', judul: 'Berprestasi hingga Tingkat Provinsi', teks: 'Peserta didik kami rutin mengikuti dan memenangi Lomba Kompetensi Siswa.' },
+const heroSlides = [
+  { image: '/img/hero.svg', title: 'Terampil, Berkarakter, Siap Kerja', text: `Sekolah menengah kejuruan bidang teknologi di ${sekolah.kontak.kabupaten}, berdiri sejak ${identitas.tahunBerdiri}.` },
+  { image: '/img/galeri-bengkel.svg', title: 'Belajar Langsung di Bengkel', text: 'Praktik dilakukan pada bengkel sekolah dengan peralatan sesuai standar industri.' },
+  { image: '/img/galeri-lks.svg', title: 'Berprestasi hingga Tingkat Provinsi', text: 'Peserta didik kami rutin mengikuti dan memenangi Lomba Kompetensi Siswa.' },
 ];
 
-const ikonProgram: Record<string, string> = {
+const programIcon: Record<string, string> = {
   wrench: 'M14.7 6.3a4 4 0 0 1-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 0 1 5.4-5.4l-2.5 2.5 2.1 2.1z',
   bike: 'M6 14a4 4 0 1 0 4 4 4 4 0 0 0-4-4zm12 0a4 4 0 1 0 4 4 4 4 0 0 0-4-4zM9 8h6l3 6M9 8 6 14',
   chip: 'M8 8h8v8H8zM4 9h2v2H4zm0 4h2v2H4zm14-4h2v2h-2zm0 4h2v2h-2zM9 4h2v2H9zm4 0h2v2h-2zM9 18h2v2H9zm4 0h2v2h-2z',
 };
 
-const warnaProgram: Record<string, string> = {
+const programColor: Record<string, string> = {
   blue: 'from-sky-500 to-blue-700',
   orange: 'from-amber-500 to-orange-700',
   violet: 'from-violet-500 to-purple-700',
 };
 ---
 
-<Layout judul="Beranda" deskripsi={`${identitas.nama} — ${identitas.tagline}`}>
+<Layout title="Beranda" description={`${identitas.nama} — ${identitas.tagline}`}>
   <!-- ================= HERO ================= -->
   <section class="relative">
     <div class="swiper hero-swiper h-140 sm:h-155 lg:h-170">
       <div class="swiper-wrapper">
         {
-          slideHero.map((s, iSlide) => (
+          heroSlides.map((s, iSlide) => (
             <div class="swiper-slide relative">
               <img
-                src={s.gambar}
+                src={s.image}
                 alt=""
                 width="1600"
                 height="900"
@@ -78,11 +78,11 @@ const warnaProgram: Record<string, string> = {
                   </span>
 
                   <h1 class="mt-5 font-display text-4xl font-extrabold leading-[1.1] text-white sm:text-5xl lg:text-6xl">
-                    {s.judul}
+                    {s.title}
                   </h1>
 
                   <p class="mt-5 max-w-xl text-[16px] leading-relaxed text-navy-100 sm:text-[17px]">
-                    {s.teks}
+                    {s.text}
                   </p>
 
                   <div class="mt-8 flex flex-wrap gap-3">
@@ -112,7 +112,7 @@ const warnaProgram: Record<string, string> = {
           <p class="mt-1 text-[13px] text-slate-600">Guru &amp; Tenaga Pendidik</p>
         </div>
         <div class="bg-white px-6 py-6 text-center">
-          <p class="font-display text-3xl font-extrabold text-navy-900">{totalSiswa}</p>
+          <p class="font-display text-3xl font-extrabold text-navy-900">{totalStudents}</p>
           <p class="mt-1 text-[13px] text-slate-600">Peserta Didik Aktif</p>
         </div>
         <div class="bg-white px-6 py-6 text-center">
@@ -142,7 +142,7 @@ const warnaProgram: Record<string, string> = {
       </div>
 
       <div data-aos="fade-left">
-        <Judul label="Sambutan" judul="Kepala Sekolah" />
+        <SectionTitle eyebrow="Sambutan" title="Kepala Sekolah" />
         <blockquote class="mt-6 border-l-4 border-amber-brand pl-5 text-[15.5px] leading-relaxed text-slate-700">
           {sambutan.pesan}
         </blockquote>
@@ -157,20 +157,20 @@ const warnaProgram: Record<string, string> = {
   <!-- ================= PROGRAM KEAHLIAN ================= -->
   <section class="bg-navy-50 py-16 sm:py-24">
     <div class="wrap">
-      <Judul
-        tengah
-        label="Kompetensi Keahlian"
-        judul="Program Keahlian Kami"
-        keterangan="Tiga program keahlian yang dirancang mengikuti kebutuhan dunia usaha dan dunia industri."
+      <SectionTitle
+        centered
+        eyebrow="Kompetensi Keahlian"
+        title="Program Keahlian Kami"
+        subtitle="Tiga program keahlian yang dirancang mengikuti kebutuhan dunia usaha dan dunia industri."
       />
 
       <div class="mt-12 grid gap-6 md:grid-cols-3">
         {
           programKeahlian.map((p, i) => (
             <article class="card card-hover p-7" data-aos="fade-up" data-aos-delay={i * 100}>
-              <div class={`inline-flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br ${warnaProgram[p.warna]} text-white`}>
+              <div class={`inline-flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br ${programColor[p.warna]} text-white`}>
                 <svg width="27" height="27" viewBox="0 0 24 24" fill="currentColor">
-                  <path d={ikonProgram[p.ikon]} />
+                  <path d={programIcon[p.ikon]} />
                 </svg>
               </div>
 
@@ -193,25 +193,25 @@ const warnaProgram: Record<string, string> = {
   </section>
 
   <!-- ================= JUMLAH GURU DAN SISWA ================= -->
-  <Statistik />
+  <Statistics />
 
   <!-- ================= VIDEO PROFIL (MULTIMEDIA) ================= -->
-  <VideoProfil />
+  <ProfileVideo />
 
   <!-- ================= BERITA KEGIATAN ================= -->
   <section class="py-16 sm:py-24">
     <div class="wrap">
       <div class="flex flex-wrap items-end justify-between gap-6">
-        <Judul
-          label="Kabar Sekolah"
-          judul="Berita Kegiatan Terbaru"
-          keterangan="Catatan kegiatan akademik, prestasi, dan pengabdian masyarakat yang berlangsung di sekolah."
+        <SectionTitle
+          eyebrow="Kabar Sekolah"
+          title="Berita Kegiatan Terbaru"
+          subtitle="Catatan kegiatan akademik, prestasi, dan pengabdian masyarakat yang berlangsung di sekolah."
         />
         <a href="/berita" class="btn bg-navy-800 text-white hover:bg-navy-600">Semua Berita</a>
       </div>
 
       <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {beritaTerbaru.map((b, i) => <KartuBerita berita={b} urutan={i} />)}
+        {latestNews.map((b, i) => <NewsCard news={b} index={i} />)}
       </div>
     </div>
   </section>
@@ -220,13 +220,13 @@ const warnaProgram: Record<string, string> = {
   <section class="bg-navy-50 py-16 sm:py-24">
     <div class="wrap">
       <div class="flex flex-wrap items-end justify-between gap-6">
-        <Judul label="Dokumentasi" judul="Galeri Kegiatan" />
+        <SectionTitle eyebrow="Dokumentasi" title="Galeri Kegiatan" />
         <a href="/galeri" class="btn bg-navy-800 text-white hover:bg-navy-600">Galeri Lengkap</a>
       </div>
 
       <div class="mt-12 grid grid-cols-2 gap-4 md:grid-cols-3">
         {
-          cuplikanGaleri.map((g, i) => (
+          gallerySnippet.map((g, i) => (
             <a
               href={g.berkas}
               class="glightbox group relative block aspect-4/3 overflow-hidden rounded-xl bg-navy-100"
@@ -296,7 +296,7 @@ const warnaProgram: Record<string, string> = {
    *  - Swiper untuk pergantian gambar sampul secara otomatis.
    *  - GLightbox agar foto galeri dapat dibuka besar tanpa pindah halaman.
    */
-  function siapkanBeranda(): void {
+  function setupHome(): void {
     const hero = document.querySelector('.hero-swiper');
     if (hero) {
       new Swiper('.hero-swiper', {
@@ -315,8 +315,8 @@ const warnaProgram: Record<string, string> = {
     }
   }
 
-  siapkanBeranda();
-  document.addEventListener('astro:page-load', siapkanBeranda);
+  setupHome();
+  document.addEventListener('astro:page-load', setupHome);
 </script>
 
 <style is:global>

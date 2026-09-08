@@ -6,30 +6,30 @@
  * dengan kotak pencarian yang menyaring secara langsung saat diketik.
  */
 import Layout from '../layouts/Layout.astro';
-import HeaderHalaman from '../components/HeaderHalaman.astro';
-import KartuBerita from '../components/KartuBerita.astro';
+import PageHeader from '../components/PageHeader.astro';
+import NewsCard from '../components/NewsCard.astro';
 
 import semuaBerita from '../data/berita.json';
 import { sortByNewest } from '../utils/format';
 
-const berita = sortByNewest(semuaBerita);
+const news = sortByNewest(semuaBerita);
 ---
 
 <Layout
-  judul="Berita"
-  deskripsi="Kabar terbaru mengenai kegiatan akademik, prestasi, dan pengabdian masyarakat sekolah."
+  title="Berita"
+  description="Kabar terbaru mengenai kegiatan akademik, prestasi, dan pengabdian masyarakat sekolah."
 >
-  <HeaderHalaman
-    remah="Berita"
-    judul="Berita Kegiatan"
-    keterangan="Kumpulan kabar mengenai kegiatan akademik, prestasi peserta didik, dan pengabdian masyarakat yang berlangsung di sekolah."
+  <PageHeader
+    breadcrumb="Berita"
+    title="Berita Kegiatan"
+    subtitle="Kumpulan kabar mengenai kegiatan akademik, prestasi peserta didik, dan pengabdian masyarakat yang berlangsung di sekolah."
   />
 
   <section class="py-16 sm:py-24">
     <div class="wrap">
       <!-- Pencarian -->
       <div class="mx-auto max-w-xl" data-aos="fade-up">
-        <label for="cari-berita" class="sr-only">Cari berita</label>
+        <label for="cari-berita" class="sr-only">Cari news</label>
         <div class="relative">
           <svg
             width="19"
@@ -52,27 +52,27 @@ const berita = sortByNewest(semuaBerita);
           />
         </div>
         <p id="hasil-cari" class="mt-3 text-center text-[13px] text-slate-500">
-          Menampilkan {berita.length} berita.
+          Menampilkan {news.length} news.
         </p>
       </div>
 
-      <!-- Daftar berita -->
+      <!-- Daftar news -->
       <div id="daftar-berita" class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {
-          berita.map((b, i) => (
+          news.map((b, i) => (
             <div
               class="item-berita"
-              data-judul={b.judul.toLowerCase()}
-              data-kategori={b.kategori.toLowerCase()}
+              data-title={b.judul.toLowerCase()}
+              data-category={b.kategori.toLowerCase()}
             >
-              <KartuBerita berita={b} urutan={i % 3} />
+              <NewsCard news={b} index={i % 3} />
             </div>
           ))
         }
       </div>
 
       <p id="berita-kosong" class="hidden py-16 text-center text-slate-500">
-        Tidak ada berita yang cocok dengan kata kunci tersebut.
+        Tidak ada news yang matches dengan kata keyword tersebut.
       </p>
     </div>
   </section>
@@ -86,48 +86,48 @@ const berita = sortByNewest(semuaBerita);
    * Pemanggilan ditunda sepersekian detik (debounce) agar penyaringan tidak
    * dijalankan pada setiap ketukan tombol.
    */
-  function siapkanPencarianBerita(): void {
+  function setupNewsSearch(): void {
     const input = document.getElementById('cari-berita') as HTMLInputElement | null;
-    const semuaItem = document.querySelectorAll<HTMLElement>('.item-berita');
+    const items = document.querySelectorAll<HTMLElement>('.item-berita');
     const info = document.getElementById('hasil-cari');
-    const pesanKosong = document.getElementById('berita-kosong');
+    const emptyMessage = document.getElementById('berita-kosong');
 
-    if (!input || !info || !pesanKosong) return;
+    if (!input || !info || !emptyMessage) return;
 
-    let penunda: number | undefined;
+    let debounceTimer: number | undefined;
 
     /**
      * Menyaring kartu berita berdasarkan kata kunci.
      *
-     * @param kunci Kata kunci yang diketik pengguna.
+     * @param keyword Kata kunci yang diketik pengguna.
      */
-    function saring(kunci: string): void {
-      const cari = kunci.trim().toLowerCase();
-      let terlihat = 0;
+    function applyFilter(keyword: string): void {
+      const query = keyword.trim().toLowerCase();
+      let visible = 0;
 
-      semuaItem.forEach((item) => {
-        const judul = item.dataset.judul ?? '';
-        const kategori = item.dataset.kategori ?? '';
-        const cocok = cari === '' || judul.includes(cari) || kategori.includes(cari);
+      items.forEach((item) => {
+        const title = item.dataset.title ?? '';
+        const category = item.dataset.category ?? '';
+        const matches = query === '' || title.includes(query) || category.includes(query);
 
-        item.classList.toggle('hidden', !cocok);
-        if (cocok) terlihat += 1;
+        item.classList.toggle('hidden', !matches);
+        if (matches) visible += 1;
       });
 
       info!.textContent =
-        cari === ''
-          ? `Menampilkan ${semuaItem.length} berita.`
-          : `Ditemukan ${terlihat} berita untuk "${kunci.trim()}".`;
+        query === ''
+          ? `Menampilkan ${items.length} berita.`
+          : `Ditemukan ${visible} berita untuk "${keyword.trim()}".`;
 
-      pesanKosong!.classList.toggle('hidden', terlihat > 0);
+      emptyMessage!.classList.toggle('hidden', visible > 0);
     }
 
     input.addEventListener('input', () => {
-      window.clearTimeout(penunda);
-      penunda = window.setTimeout(() => saring(input.value), 180);
+      window.clearTimeout(debounceTimer);
+      debounceTimer = window.setTimeout(() => applyFilter(input.value), 180);
     });
   }
 
-  siapkanPencarianBerita();
-  document.addEventListener('astro:page-load', siapkanPencarianBerita);
+  setupNewsSearch();
+  document.addEventListener('astro:page-load', setupNewsSearch);
 </script>

@@ -7,41 +7,41 @@
  * berpindah halaman.
  */
 import Layout from '../layouts/Layout.astro';
-import HeaderHalaman from '../components/HeaderHalaman.astro';
+import PageHeader from '../components/PageHeader.astro';
 
 import galeri from '../data/galeri.json';
 import { groupBy } from '../utils/format';
 
 /** Pengelompokan dipakai untuk menghitung jumlah foto tiap kategori. */
-const perKategori = groupBy(galeri, 'kategori');
+const byCategory = groupBy(galeri, 'kategori');
 
-const kategori = [
+const categories = [
   { nama: 'Semua', jumlah: galeri.length },
-  ...Object.entries(perKategori).map(([nama, isi]) => ({ nama, jumlah: isi.length })),
+  ...Object.entries(byCategory).map(([nama, isi]) => ({ nama, jumlah: isi.length })),
 ];
 ---
 
 <Layout
-  judul="Galeri"
-  deskripsi="Dokumentasi kegiatan belajar, praktik bengkel, prestasi, dan kegiatan kesiswaan."
+  title="Galeri"
+  description="Dokumentasi kegiatan belajar, praktik bengkel, prestasi, dan kegiatan kesiswaan."
 >
-  <HeaderHalaman
-    remah="Galeri"
-    judul="Galeri Kegiatan"
-    keterangan="Dokumentasi kegiatan belajar mengajar, praktik di bengkel, prestasi, serta kegiatan kesiswaan sepanjang tahun ajaran."
+  <PageHeader
+    breadcrumb="Galeri"
+    title="Galeri Kegiatan"
+    subtitle="Dokumentasi kegiatan belajar mengajar, praktik di bengkel, prestasi, serta kegiatan kesiswaan sepanjang tahun ajaran."
   />
 
   <section class="py-16 sm:py-24">
     <div class="wrap">
-      <!-- Penyaring kategori -->
+      <!-- Penyaring categories -->
       <div class="flex flex-wrap justify-center gap-2.5" data-aos="fade-up">
         {
-          kategori.map((k, i) => (
+          categories.map((k, i) => (
             <button
               type="button"
               class="filter-galeri inline-flex items-center gap-2 rounded-full border px-4.5 py-2 text-[13.5px] font-semibold transition-colors"
-              data-kategori={k.nama}
-              data-aktif={i === 0}
+              data-category={k.nama}
+              data-active={i === 0}
             >
               {k.nama}
               <span class="jumlah rounded-full px-1.5 py-0.5 text-[11px] font-bold">{k.jumlah}</span>
@@ -60,7 +60,7 @@ const kategori = [
               data-gallery="galeri-utama"
               data-title={g.judul}
               data-description={g.kategori}
-              data-kategori={g.kategori}
+              data-category={g.kategori}
               data-aos="zoom-in"
               data-aos-delay={(i % 4) * 60}
             >
@@ -97,7 +97,7 @@ const kategori = [
       </div>
 
       <p id="galeri-kosong" class="hidden py-16 text-center text-slate-500">
-        Belum ada foto pada kategori ini.
+        Belum ada foto pada categories ini.
       </p>
     </div>
   </section>
@@ -120,13 +120,13 @@ const kategori = [
     color: var(--color-navy-700);
   }
 
-  .filter-galeri[data-aktif='true'] {
+  .filter-galeri[data-active='true'] {
     border-color: var(--color-navy-800);
     background: var(--color-navy-800);
     color: #ffffff;
   }
 
-  .filter-galeri[data-aktif='true'] .jumlah {
+  .filter-galeri[data-active='true'] .jumlah {
     background: rgba(255, 255, 255, 0.22);
     color: #ffffff;
   }
@@ -143,46 +143,46 @@ const kategori = [
    * tombol berikutnya/sebelumnya hanya berpindah di antara foto yang sedang
    * terlihat — bukan seluruh foto.
    */
-  function siapkanGaleri(): void {
-    const tombolSemua = document.querySelectorAll<HTMLButtonElement>('.filter-galeri');
-    const itemSemua = document.querySelectorAll<HTMLElement>('.item-galeri');
-    const pesanKosong = document.getElementById('galeri-kosong');
+  function setupGallery(): void {
+    const buttons = document.querySelectorAll<HTMLButtonElement>('.filter-galeri');
+    const items = document.querySelectorAll<HTMLElement>('.item-galeri');
+    const emptyMessage = document.getElementById('galeri-kosong');
 
-    if (itemSemua.length === 0 || !pesanKosong) return;
+    if (items.length === 0 || !emptyMessage) return;
 
     let lightbox = GLightbox({ selector: '.item-galeri:not(.hidden)', touchNavigation: true, loop: true });
 
     /**
      * Menyaring foto berdasarkan kategori terpilih.
      *
-     * @param pilihan Nama kategori, atau "Semua".
+     * @param choice Nama kategori, atau "Semua".
      */
-    function saring(pilihan: string): void {
-      let terlihat = 0;
+    function applyFilter(choice: string): void {
+      let visible = 0;
 
-      itemSemua.forEach((item) => {
-        const cocok = pilihan === 'Semua' || item.dataset.kategori === pilihan;
-        item.classList.toggle('hidden', !cocok);
-        if (cocok) terlihat += 1;
+      items.forEach((item) => {
+        const matches = choice === 'Semua' || item.dataset.category === choice;
+        item.classList.toggle('hidden', !matches);
+        if (matches) visible += 1;
       });
 
-      pesanKosong!.classList.toggle('hidden', terlihat > 0);
+      emptyMessage!.classList.toggle('hidden', visible > 0);
 
       // Segarkan daftar foto yang dikenali lightbox.
       lightbox.destroy();
       lightbox = GLightbox({ selector: '.item-galeri:not(.hidden)', touchNavigation: true, loop: true });
     }
 
-    tombolSemua.forEach((tombol) => {
-      tombol.addEventListener('click', () => {
-        tombolSemua.forEach((t) => t.setAttribute('data-aktif', 'false'));
-        tombol.setAttribute('data-aktif', 'true');
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        buttons.forEach((t) => t.setAttribute('data-active', 'false'));
+        button.setAttribute('data-active', 'true');
 
-        saring(tombol.dataset.kategori ?? 'Semua');
+        applyFilter(button.dataset.category ?? 'Semua');
       });
     });
   }
 
-  siapkanGaleri();
-  document.addEventListener('astro:page-load', siapkanGaleri);
+  setupGallery();
+  document.addEventListener('astro:page-load', setupGallery);
 </script>

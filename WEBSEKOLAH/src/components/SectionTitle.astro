@@ -1,0 +1,43 @@
+---
+/**
+ * SectionTitle — kepala setiap bagian halaman.
+ *
+ * Dibuat sebagai komponen tersendiri agar seluruh bagian di situs memakai
+ * susunan dan jarak yang sama. Bila kelak gayanya diubah, cukup berkas ini
+ * yang disunting.
+ */
+interface Props {
+  /** Label kecil di atas judul, misalnya "Profil Sekolah". */
+  eyebrow?: string;
+  /** Judul utama bagian. */
+  title: string;
+  /** Kalimat penjelas di bawah judul. */
+  subtitle?: string;
+  /** Rata tengah, dipakai pada bagian yang berdiri sendiri. */
+  centered?: boolean;
+  /** Warna terang untuk dipakai di atas latar gelap. */
+  light?: boolean;
+}
+
+const { eyebrow, title, subtitle, centered = false, light = false } = Astro.props;
+---
+
+<div class={`${centered ? 'text-center' : ''} ${centered ? 'mx-auto max-w-2xl' : 'max-w-2xl'}`}>
+  {eyebrow && <span class={`eyebrow ${light ? 'text-amber-brand' : ''}`}>{eyebrow}</span>}
+
+  <h2
+    class={`rule ${centered ? 'rule-center' : ''} mt-2 font-display text-3xl font-extrabold sm:text-4xl ${
+      light ? 'text-white' : 'text-navy-900'
+    }`}
+  >
+    {title}
+  </h2>
+
+  {
+    subtitle && (
+      <p class={`mt-5 text-[15px] leading-relaxed ${light ? 'text-navy-200' : 'text-slate-600'}`}>
+        {subtitle}
+      </p>
+    )
+  }
+</div>
