@@ -542,7 +542,7 @@ def cover():
         ['Nama Asesi', 'Irfana Dwi Fangga'],
         ['Nama Asesor', 'Yosep Kurniawan, ST'],
         ['Durasi', '3 Jam'],
-        ['Tanggal', '08 September 2026'],
+        ['Tanggal', '14 September 2026'],
         ['Repository', 'https://github.com/irfanadwifangga/sertifikasi-lspedi'],
     ]
     data = [[Paragraph('<b>%s</b>' % k, ST['td']), Paragraph(v, ST['td'])]

@@ -9,7 +9,7 @@
 | Formulir | FR.IA.02 — Tugas Praktik Demonstrasi |
 | Nama Asesi | Irfana Dwi Fangga |
 | Nama Asesor | Yosep Kurniawan, ST — No. Reg 000.002992.2021 |
-| Tanggal | 08 September 2026 |
+| Tanggal | 14 September 2026 |
 | Durasi | 3 Jam |
 | Repository | https://github.com/irfanadwifangga/sertifikasi-lspedi |
 
