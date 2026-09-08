@@ -11,7 +11,7 @@
 | **Jenis Skema** | Okupasi — Level KKNI 2 |
 | **Lembaga Sertifikasi** | LSP Entrepreneur Digital Indonesia |
 | **Tempat Uji Kompetensi** | POLINELA, Bandar Lampung |
-| **Tanggal** | 26 Agustus 2026                                                |
+| **Tanggal** | 14 September 2026                                                |
 | **Repository**        | https://github.com/irfanadwifangga/sertifikasi-lspedi                                     |
 
 ---

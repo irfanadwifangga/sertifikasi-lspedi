@@ -1,7 +1,8 @@
-node_modules/
-dist/
-coverage/
-.env
-*.log
-public/vendor/
-tsconfig.tsbuildinfo
+# Berlaku untuk seluruh repo. Aturan khas tiap proyek tetap berada di
+# SIPERPUS/.gitignore dan WEBSEKOLAH/.gitignore.
+
+# Setelan editor, khusus mesin masing-masing.
+.claude/
+
+# Berkas soal dari penyelenggara, bukan hasil pekerjaan sendiri.
+*Tugas Praktik Demonstrasi.pdf

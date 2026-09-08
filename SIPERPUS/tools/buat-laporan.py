@@ -538,7 +538,7 @@ def cover():
         ['Tempat Uji Kompetensi', 'POLINELA, Bandar Lampung'],
         ['Lembaga', 'LSP Entrepreneur Digital Indonesia'],
         ['Nama Asesi', 'Irfana Dwi Fangga'],
-        ['Tanggal', '26 Agustus 2026'],
+        ['Tanggal', '14 September 2026'],
         ['Repository', 'https://github.com/irfanadwifangga/sertifikasi-lspedi'],
     ]
     data = [[Paragraph('<b>%s</b>' % k, ST['td']), Paragraph(v, ST['td'])]
