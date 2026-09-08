@@ -1,0 +1,275 @@
+---
+/**
+ * HALAMAN 2 — PROFIL SEKOLAH
+ *
+ * Halaman ini memenuhi ketentuan soal nomor 5: "Terdapat Tabel Informasi
+ * Profil Sekolah pada menu utama Profil Sekolah". Tabelnya dibangun dengan
+ * cara memetakan (map) array data, bukan mengetik satu per satu baris <tr>,
+ * sehingga penambahan baris cukup dilakukan pada data.
+ */
+import Layout from '../layouts/Layout.astro';
+import HeaderHalaman from '../components/HeaderHalaman.astro';
+import Judul from '../components/Judul.astro';
+
+import sekolah from '../data/sekolah.json';
+import { formatNumber } from '../utils/format';
+
+const { identitas, kontak, statistik, mutu, sarana, visi, misi, sejarah, prestasi } = sekolah;
+
+const totalSiswa = statistik.siswaLakiLaki + statistik.siswaPerempuan;
+
+/**
+ * Isi Tabel Informasi Profil Sekolah.
+ *
+ * Disusun sebagai array objek agar tabelnya dihasilkan lewat perulangan.
+ * Inilah penerapan pemrograman terstruktur pada sisi tampilan.
+ */
+const barisProfil = [
+  { label: 'Nama Sekolah', nilai: identitas.nama },
+  { label: 'NPSN', nilai: identitas.npsn },
+  { label: 'Bentuk Pendidikan', nilai: identitas.bentukPendidikan },
+  { label: 'Status Sekolah', nilai: identitas.statusSekolah },
+  { label: 'Akreditasi', nilai: identitas.akreditasi, sorot: true },
+  { label: 'Tahun Berdiri', nilai: String(identitas.tahunBerdiri) },
+  { label: 'Yayasan Penyelenggara', nilai: identitas.yayasan },
+  { label: 'Kurikulum', nilai: identitas.kurikulum },
+  { label: 'Waktu Penyelenggaraan', nilai: identitas.penyelenggaraan },
+  {
+    label: 'Alamat',
+    nilai: `${kontak.alamat}, Kel. ${kontak.kelurahan}, Kec. ${kontak.kecamatan}, ${kontak.kabupaten}, ${kontak.provinsi} ${kontak.kodePos}`,
+  },
+  { label: 'Telepon', nilai: kontak.telepon },
+  { label: 'Surel', nilai: kontak.email },
+  { label: 'Jumlah Guru & Tenaga Pendidik', nilai: `${statistik.guru} orang` },
+  { label: 'Jumlah Tenaga Kependidikan', nilai: `${statistik.tenagaKependidikan} orang` },
+  {
+    label: 'Jumlah Peserta Didik',
+    nilai: `${formatNumber(totalSiswa)} siswa (${statistik.siswaLakiLaki} putra, ${statistik.siswaPerempuan} putri)`,
+    sorot: true,
+  },
+  { label: 'Rombongan Belajar', nilai: `${statistik.rombonganBelajar} rombel` },
+  { label: 'Ruang Kelas', nilai: `${statistik.ruangKelas} ruang` },
+  { label: 'Laboratorium', nilai: `${statistik.laboratorium} ruang` },
+  { label: 'Perpustakaan', nilai: `${statistik.perpustakaan} ruang` },
+  { label: 'Luas Tanah', nilai: statistik.luasTanah },
+  { label: 'Akses Internet', nilai: sarana.aksesInternet },
+  { label: 'Sumber & Daya Listrik', nilai: `${sarana.sumberListrik} — ${sarana.dayaListrik}` },
+];
+
+/** Indikator mutu yang ditampilkan sebagai batang persentase. */
+const indikatorMutu = [
+  { label: 'Guru berkualifikasi S1/D4 ke atas', nilai: mutu.persentaseGuruKualifikasi },
+  { label: 'Guru bersertifikat pendidik', nilai: mutu.persentaseGuruSertifikasi },
+  { label: 'Lulusan terserap dunia kerja', nilai: mutu.persentaseLulusanBekerja },
+];
+---
+
+<Layout
+  judul="Profil Sekolah"
+  deskripsi={`Profil lengkap ${identitas.nama}: visi misi, sejarah, data guru dan siswa, serta informasi akreditasi.`}
+>
+  <HeaderHalaman
+    remah="Profil Sekolah"
+    judul="Profil Sekolah"
+    keterangan={`Informasi menyeluruh mengenai ${identitas.nama}, mulai dari visi dan misi, riwayat perkembangan, hingga data pokok sekolah pada semester ${identitas.semesterData}.`}
+  />
+
+  <!-- ================= VISI DAN MISI ================= -->
+  <section class="py-16 sm:py-24">
+    <div class="wrap grid gap-10 lg:grid-cols-2">
+      <div class="rounded-2xl bg-navy-800 p-8 text-white sm:p-10" data-aos="fade-right">
+        <div class="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-amber-brand text-navy-900">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 5c-5 0-9 4.5-10 7 1 2.5 5 7 10 7s9-4.5 10-7c-1-2.5-5-7-10-7zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0-2a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" />
+          </svg>
+        </div>
+        <h2 class="mt-5 font-display text-2xl font-extrabold">Visi</h2>
+        <p class="mt-4 text-[15.5px] leading-relaxed text-navy-100">{visi}</p>
+      </div>
+
+      <div class="rounded-2xl border border-slate-200 bg-white p-8 sm:p-10" data-aos="fade-left">
+        <div class="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-navy-800 text-amber-brand">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M4 4h11l-2 3 2 3H4zM4 12h16v3H4zm0 5h13v3H4z" />
+          </svg>
+        </div>
+        <h2 class="mt-5 font-display text-2xl font-extrabold text-navy-900">Misi</h2>
+        <ol class="mt-5 space-y-3.5">
+          {
+            misi.map((m, i) => (
+              <li class="flex gap-3">
+                <span class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-navy-100 text-xs font-bold text-navy-700">
+                  {i + 1}
+                </span>
+                <span class="text-[15px] leading-relaxed text-slate-700">{m}</span>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TABEL INFORMASI PROFIL SEKOLAH ================= -->
+  <section class="bg-navy-50 py-16 sm:py-24">
+    <div class="wrap">
+      <Judul
+        tengah
+        label="Data Pokok"
+        judul="Tabel Informasi Profil Sekolah"
+        keterangan={`Data resmi sekolah pada semester ${identitas.semesterData}.`}
+      />
+
+      <div class="mx-auto mt-12 max-w-4xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" data-aos="fade-up">
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse text-left text-[14.5px]">
+            <caption class="sr-only">Tabel informasi profil {identitas.nama}</caption>
+
+            <thead>
+              <tr class="bg-navy-800 text-white">
+                <th scope="col" class="w-16 px-5 py-3.5 text-center font-semibold">No</th>
+                <th scope="col" class="px-5 py-3.5 font-semibold">Keterangan</th>
+                <th scope="col" class="px-5 py-3.5 font-semibold">Informasi</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {
+                barisProfil.map((baris, i) => (
+                  <tr class={`border-t border-slate-100 ${i % 2 === 1 ? 'bg-slate-50/70' : ''}`}>
+                    <td class="px-5 py-3 text-center text-slate-500">{i + 1}</td>
+                    <th scope="row" class="px-5 py-3 font-semibold text-navy-900">
+                      {baris.label}
+                    </th>
+                    <td class={`px-5 py-3 ${baris.sorot ? 'font-bold text-amber-deep' : 'text-slate-700'}`}>
+                      {baris.nilai}
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= INDIKATOR MUTU ================= -->
+  <section class="py-16 sm:py-24">
+    <div class="wrap grid gap-12 lg:grid-cols-2 lg:items-center">
+      <div data-aos="fade-right">
+        <Judul
+          label="Mutu Pendidikan"
+          judul="Indikator Mutu Sekolah"
+          keterangan="Ukuran capaian sekolah yang diperbarui setiap semester sebagai bahan evaluasi bersama."
+        />
+      </div>
+
+      <div class="space-y-7" data-aos="fade-left">
+        {
+          indikatorMutu.map((ind) => (
+            <div>
+              <div class="flex items-end justify-between">
+                <span class="text-[14.5px] font-semibold text-navy-900">{ind.label}</span>
+                <span class="font-display text-lg font-extrabold text-amber-deep">{ind.nilai}%</span>
+              </div>
+              <div class="mt-2 h-2.5 overflow-hidden rounded-full bg-slate-200">
+                <div
+                  class="batang h-full rounded-full bg-gradient-to-r from-navy-600 to-amber-brand"
+                  style={`width: 0%`}
+                  data-lebar={ind.nilai}
+                />
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SEJARAH ================= -->
+  <section class="bg-navy-50 py-16 sm:py-24">
+    <div class="wrap">
+      <Judul
+        tengah
+        label="Perjalanan Kami"
+        judul="Sejarah Singkat Sekolah"
+        keterangan={`Tonggak penting sejak berdiri pada tahun ${identitas.tahunBerdiri}.`}
+      />
+
+      <ol class="relative mx-auto mt-12 max-w-3xl border-l-2 border-navy-200 pl-8">
+        {
+          sejarah.map((s, i) => (
+            <li class="relative pb-9 last:pb-0" data-aos="fade-up" data-aos-delay={i * 70}>
+              <span class="absolute -left-10.25 flex h-6 w-6 items-center justify-center rounded-full border-4 border-navy-50 bg-amber-brand" />
+              <p class="font-display text-lg font-extrabold text-navy-900">{s.tahun}</p>
+              <p class="mt-1 text-[15px] leading-relaxed text-slate-700">{s.peristiwa}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- ================= PRESTASI ================= -->
+  <section class="py-16 sm:py-24">
+    <div class="wrap">
+      <Judul tengah label="Capaian" judul="Prestasi Sekolah" />
+
+      <div class="mt-12 grid gap-5 sm:grid-cols-2">
+        {
+          prestasi.map((p, i) => (
+            <article class="card card-hover flex items-start gap-4 p-6" data-aos="fade-up" data-aos-delay={i * 70}>
+              <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-deep">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M6 4h12v3a6 6 0 0 1-12 0zM4 5h2v2a3 3 0 0 1-2-2zm14 0h2a3 3 0 0 1-2 2zM10 14h4v3h3v2H7v-2h3z" />
+                </svg>
+              </div>
+              <div>
+                <p class="text-xs font-bold uppercase tracking-wider text-amber-deep">
+                  {p.tahun} &middot; Tingkat {p.tingkat}
+                </p>
+                <h3 class="mt-1 font-display text-[16px] font-bold leading-snug text-navy-900">{p.judul}</h3>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  /**
+   * Menganimasikan batang indikator mutu dari nol menuju nilainya.
+   *
+   * Animasi dimulai hanya ketika batang terlihat di layar, memakai
+   * IntersectionObserver.
+   */
+  function siapkanBatangMutu(): void {
+    const semuaBatang = document.querySelectorAll<HTMLElement>('.batang');
+    if (semuaBatang.length === 0) return;
+
+    const pengamat = new IntersectionObserver(
+      (entri) => {
+        for (const e of entri) {
+          if (!e.isIntersecting) continue;
+
+          const batang = e.target as HTMLElement;
+          const lebar = Number(batang.dataset.lebar ?? 0);
+
+          batang.style.transition = 'width 1.1s cubic-bezier(.2,.7,.3,1)';
+          batang.style.width = `${lebar}%`;
+
+          pengamat.unobserve(batang);
+        }
+      },
+      { threshold: 0.5 },
+    );
+
+    semuaBatang.forEach((b) => pengamat.observe(b));
+  }
+
+  siapkanBatangMutu();
+  document.addEventListener('astro:page-load', siapkanBatangMutu);
+</script>

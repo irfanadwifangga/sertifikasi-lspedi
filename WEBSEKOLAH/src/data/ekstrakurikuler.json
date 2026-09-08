@@ -1,0 +1,56 @@
+[
+  {
+    "nama": "Pramuka",
+    "kategori": "Wajib",
+    "jadwal": "Sabtu, 14.00 - 16.00",
+    "pembina": "Tim Pembina Kesiswaan",
+    "ikon": "tent",
+    "warna": "amber",
+    "deskripsi": "Kegiatan kepramukaan wajib bagi seluruh peserta didik kelas X untuk membentuk kemandirian, disiplin, dan jiwa kepemimpinan."
+  },
+  {
+    "nama": "Otomotif Club",
+    "kategori": "Keahlian",
+    "jadwal": "Jumat, 15.00 - 17.00",
+    "pembina": "Tim Pembina Kesiswaan",
+    "ikon": "wrench",
+    "warna": "blue",
+    "deskripsi": "Wadah pengembangan keterampilan otomotif di luar jam pelajaran, meliputi modifikasi ringan dan persiapan Lomba Kompetensi Siswa."
+  },
+  {
+    "nama": "Palang Merah Remaja",
+    "kategori": "Sosial",
+    "jadwal": "Rabu, 15.00 - 16.30",
+    "pembina": "Tim Pembina Kesiswaan",
+    "ikon": "heart",
+    "warna": "rose",
+    "deskripsi": "Pelatihan pertolongan pertama, kesehatan remaja, dan kesiapsiagaan bencana bagi peserta didik."
+  },
+  {
+    "nama": "Futsal",
+    "kategori": "Olahraga",
+    "jadwal": "Selasa & Kamis, 15.30 - 17.00",
+    "pembina": "Tim Pembina Kesiswaan",
+    "ikon": "ball",
+    "warna": "emerald",
+    "deskripsi": "Pembinaan olahraga futsal untuk menjaga kebugaran sekaligus persiapan kompetisi antarsekolah."
+  },
+  {
+    "nama": "Rohis",
+    "kategori": "Keagamaan",
+    "jadwal": "Jumat, 11.00 - 12.00",
+    "pembina": "Tim Pembina Kesiswaan",
+    "ikon": "moon",
+    "warna": "teal",
+    "deskripsi": "Kegiatan kerohanian Islam meliputi kajian rutin, tahsin, dan kepanitiaan hari besar keagamaan."
+  },
+  {
+    "nama": "Seni Musik",
+    "kategori": "Seni",
+    "jadwal": "Sabtu, 10.00 - 12.00",
+    "pembina": "Tim Pembina Kesiswaan",
+    "ikon": "music",
+    "warna": "violet",
+    "deskripsi": "Latihan vokal dan alat musik untuk mengisi acara sekolah serta mengikuti festival seni pelajar."
+  }
+]

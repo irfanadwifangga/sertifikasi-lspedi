@@ -1,0 +1,119 @@
+---
+/**
+ * Layout — kerangka bersama seluruh halaman.
+ *
+ * Menyatukan bagian yang selalu sama (kepala dokumen, navbar, footer, dan
+ * pemuatan library) dalam satu berkas. Setiap halaman cukup mengisi bagian
+ * isinya lewat <slot />. Ini bentuk nyata unit "menyusun fungsi, file, atau
+ * sumber daya pemrograman dalam organisasi yang rapi": tidak ada satu pun
+ * baris navbar atau footer yang disalin ulang di halaman lain.
+ */
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import sekolah from '../data/sekolah.json';
+import '../styles/global.css';
+
+interface Props {
+  /** Judul halaman, tampil di tab peramban dan mesin pencari. */
+  judul: string;
+  /** Ringkasan halaman untuk meta description. */
+  deskripsi?: string;
+}
+
+const { judul, deskripsi } = Astro.props;
+const { identitas } = sekolah;
+
+const deskripsiFinal =
+  deskripsi ??
+  `${identitas.nama} — ${identitas.tagline}. Sekolah menengah kejuruan bidang teknologi di ${sekolah.kontak.kabupaten}, ${sekolah.kontak.provinsi}.`;
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{judul} &middot; {identitas.namaSingkat}</title>
+    <meta name="description" content={deskripsiFinal} />
+
+    <link rel="icon" type="image/svg+xml" href="/img/logo.svg" />
+
+    <!-- Huruf dimuat dari Google Fonts (komponen pre-existing). -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Berbagi tautan ke media sosial -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={`${judul} · ${identitas.namaSingkat}`} />
+    <meta property="og:description" content={deskripsiFinal} />
+    <meta property="og:image" content="/img/hero.svg" />
+  </head>
+
+  <body class="flex min-h-screen flex-col">
+    <Navbar />
+
+    <main class="flex-1">
+      <slot />
+    </main>
+
+    <Footer />
+
+    <!-- Tombol kembali ke atas -->
+    <button
+      id="ke-atas"
+      type="button"
+      aria-label="Kembali ke atas halaman"
+      class="fixed bottom-6 right-6 z-40 hidden h-11 w-11 items-center justify-center rounded-full bg-navy-800 text-white shadow-lg transition-all hover:bg-navy-600"
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 19V5M5 12l7-7 7 7" />
+      </svg>
+    </button>
+
+    <script>
+      import AOS from 'aos';
+      import 'aos/dist/aos.css';
+
+      /**
+       * Menyiapkan animasi gulir dan tombol "kembali ke atas".
+       *
+       * AOS adalah library pre-existing yang memunculkan elemen secara halus
+       * saat masuk ke layar. Elemen yang ingin dianimasikan cukup diberi
+       * atribut `data-aos` pada berkas halaman.
+       */
+      function siapkanHalaman(): void {
+        AOS.init({
+          duration: 600,
+          easing: 'ease-out-cubic',
+          once: true,
+          offset: 60,
+        });
+
+        const tombol = document.getElementById('ke-atas');
+        if (!tombol) return;
+
+        /** Menampilkan tombol hanya setelah halaman digulir cukup jauh. */
+        function perbaruiTombol(): void {
+          const tampil = window.scrollY > 420;
+          tombol!.classList.toggle('hidden', !tampil);
+          tombol!.classList.toggle('flex', tampil);
+        }
+
+        perbaruiTombol();
+        window.addEventListener('scroll', perbaruiTombol, { passive: true });
+        tombol.addEventListener('click', () => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+
+      siapkanHalaman();
+      document.addEventListener('astro:page-load', siapkanHalaman);
+    </script>
+  </body>
+</html>

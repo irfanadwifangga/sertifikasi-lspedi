@@ -1,0 +1,249 @@
+---
+/**
+ * Navbar — menu utama situs.
+ *
+ * Komponen ini memenuhi unit "Mengimplementasikan user interface" lewat tiga
+ * perilaku interaktif:
+ *  1. Menu aktif ditandai otomatis berdasarkan alamat halaman yang dibuka.
+ *  2. Latar navbar berubah menjadi solid ketika halaman digulir.
+ *  3. Tombol hamburger membuka menu pada layar sempit.
+ *
+ * Daftar menu disimpan sebagai array agar penambahan halaman baru cukup
+ * dilakukan di satu tempat (penerapan pemrograman terstruktur).
+ */
+import sekolah from '../data/sekolah.json';
+
+const { identitas } = sekolah;
+
+/** Daftar menu utama. Satu sumber kebenaran untuk navbar dan footer. */
+const menu = [
+  { label: 'Beranda', href: '/' },
+  { label: 'Profil Sekolah', href: '/profil' },
+  { label: 'Program Keahlian', href: '/program-keahlian' },
+  { label: 'Ekstrakurikuler', href: '/ekstrakurikuler' },
+  { label: 'Galeri', href: '/galeri' },
+  { label: 'Berita', href: '/berita' },
+  { label: 'Kontak', href: '/kontak' },
+];
+
+/**
+ * Menentukan apakah sebuah menu sedang aktif.
+ *
+ * Perbandingan dilakukan tanpa garis miring di akhir supaya "/profil" dan
+ * "/profil/" dianggap sama.
+ */
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+---
+
+<header id="navbar" class="fixed inset-x-0 top-0 z-50 transition-all duration-300">
+  <div class="wrap">
+    <nav class="flex h-17 items-center justify-between gap-4">
+      <!-- Logo dan nama sekolah -->
+      <a href="/" class="flex items-center gap-3 shrink-0">
+        {/* Logo selalu berada di puncak halaman, jadi sengaja TIDAK dimuat malas. */}
+        <img
+          src="/img/logo.svg"
+          alt="Logo sekolah"
+          width="40"
+          height="40"
+          loading="eager"
+          class="h-10 w-10"
+        />
+        <span class="leading-tight">
+          <span id="brand-name" class="block font-display text-[15px] font-extrabold transition-colors">
+            {identitas.namaSingkat}
+          </span>
+          <span id="brand-tag" class="block text-[11px] transition-colors">
+            {identitas.tagline}
+          </span>
+        </span>
+      </a>
+
+      <!-- Menu layar lebar -->
+      <ul id="menu-desktop" class="hidden items-center gap-1 lg:flex">
+        {
+          menu.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                data-active={isActive(item.href)}
+                class="nav-link rounded-lg px-3 py-2 text-[14px] font-semibold transition-colors"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <!-- Tombol menu layar sempit -->
+      <button
+        id="menu-toggle"
+        type="button"
+        aria-label="Buka menu"
+        aria-expanded="false"
+        aria-controls="menu-mobile"
+        class="inline-flex h-10 w-10 items-center justify-center rounded-lg lg:hidden"
+      >
+        <svg id="icon-open" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <path d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
+        <svg id="icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" class="hidden">
+          <path d="M6 6l12 12M18 6L6 18" />
+        </svg>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Panel menu layar sempit -->
+  <div id="menu-mobile" class="hidden border-t border-navy-200 bg-white lg:hidden">
+    <ul class="wrap flex flex-col py-3">
+      {
+        menu.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              data-active={isActive(item.href)}
+              class="mobile-link block rounded-lg px-3 py-2.5 text-[15px] font-semibold text-navy-800"
+            >
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</header>
+
+<style>
+  /* Keadaan awal: navbar transparan di atas gambar sampul. */
+  #navbar {
+    background: transparent;
+  }
+
+  #navbar #brand-name,
+  #navbar #brand-tag,
+  #navbar .nav-link,
+  #navbar #menu-toggle {
+    color: #ffffff;
+  }
+
+  #navbar #brand-tag {
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  #navbar .nav-link:hover {
+    background: rgba(255, 255, 255, 0.16);
+  }
+
+  #navbar .nav-link[data-active='true'] {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  /* Navbar berlatar putih. Dipakai pada dua keadaan sekaligus:
+     - .scrolled : halaman beranda yang sudah digulir melewati gambar sampul.
+     - .solid    : halaman selain beranda, yang tidak punya gambar sampul.
+
+     Kedua kelas WAJIB memakai aturan warna yang sama. Bila salah satunya
+     terlewat, tulisan putih akan tertinggal di atas latar putih dan menu
+     menjadi tidak terbaca. */
+  #navbar.scrolled,
+  #navbar.solid {
+    background: #ffffff;
+    box-shadow: 0 6px 24px -12px rgba(11, 30, 59, 0.45);
+  }
+
+  #navbar.scrolled #brand-name,
+  #navbar.solid #brand-name {
+    color: var(--color-navy-900);
+  }
+
+  #navbar.scrolled #brand-tag,
+  #navbar.solid #brand-tag {
+    color: #6b7688;
+  }
+
+  #navbar.scrolled .nav-link,
+  #navbar.scrolled #menu-toggle,
+  #navbar.solid .nav-link,
+  #navbar.solid #menu-toggle {
+    color: var(--color-navy-800);
+  }
+
+  #navbar.scrolled .nav-link:hover,
+  #navbar.solid .nav-link:hover {
+    background: var(--color-navy-100);
+  }
+
+  #navbar.scrolled .nav-link[data-active='true'],
+  #navbar.solid .nav-link[data-active='true'] {
+    background: var(--color-navy-600);
+    color: #ffffff;
+  }
+
+  .mobile-link[data-active='true'] {
+    background: var(--color-navy-600);
+    color: #ffffff;
+  }
+
+  .mobile-link:hover {
+    background: var(--color-navy-100);
+  }
+</style>
+
+<script>
+  /**
+   * Perilaku interaktif navbar.
+   *
+   * Dibungkus dalam satu fungsi agar tidak mencemari lingkup global, dan
+   * dijalankan ulang pada setiap perpindahan halaman.
+   */
+  function siapkanNavbar(): void {
+    const navbar = document.getElementById('navbar');
+    const toggle = document.getElementById('menu-toggle');
+    const panel = document.getElementById('menu-mobile');
+    const ikonBuka = document.getElementById('icon-open');
+    const ikonTutup = document.getElementById('icon-close');
+
+    if (!navbar || !toggle || !panel || !ikonBuka || !ikonTutup) return;
+
+    // Halaman selain beranda tidak punya gambar sampul, sehingga navbar
+    // harus langsung solid agar tulisannya terbaca.
+    const diBeranda = (window.location.pathname.replace(/\/+$/, '') || '/') === '/';
+    if (!diBeranda) navbar.classList.add('solid');
+
+    /** Menambah latar solid begitu halaman digulir melewati 20 piksel. */
+    function perbaruiLatar(): void {
+      if (!diBeranda) return;
+      navbar!.classList.toggle('scrolled', window.scrollY > 20);
+    }
+
+    /** Membuka atau menutup panel menu pada layar sempit. */
+    function alihkanMenu(): void {
+      const terbuka = !panel!.classList.contains('hidden');
+      panel!.classList.toggle('hidden', terbuka);
+      ikonBuka!.classList.toggle('hidden', !terbuka);
+      ikonTutup!.classList.toggle('hidden', terbuka);
+      toggle!.setAttribute('aria-expanded', String(!terbuka));
+
+      // Saat panel terbuka, navbar wajib solid agar menu terbaca.
+      if (!terbuka) navbar!.classList.add('scrolled');
+      else perbaruiLatar();
+    }
+
+    perbaruiLatar();
+    window.addEventListener('scroll', perbaruiLatar, { passive: true });
+    toggle.addEventListener('click', alihkanMenu);
+
+    // Tutup panel bila layar dilebarkan kembali.
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 1024 && !panel.classList.contains('hidden')) {
+        alihkanMenu();
+      }
+    });
+  }
+
+  siapkanNavbar();
+  document.addEventListener('astro:page-load', siapkanNavbar);
+</script>

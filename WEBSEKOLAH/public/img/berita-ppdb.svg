@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800" role="img" aria-label="Penerimaan Siswa Baru">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#047857"/>
+      <stop offset="100%" stop-color="#34d399"/>
+    </linearGradient>
+    <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+      <path d="M60 0H0V60" fill="none" stroke="#ffffff" stroke-opacity=".08" stroke-width="1.5"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="800" fill="url(#bg)"/>
+  <rect width="1200" height="800" fill="url(#grid)"/>
+
+  <circle cx="1010" cy="150" r="230" fill="#ffffff" fill-opacity=".07"/>
+  <circle cx="180" cy="690" r="180" fill="#ffffff" fill-opacity=".06"/>
+
+  <g transform="translate(600 330) scale(9) translate(-12 -12)">
+    <path d="M4 10v4h3l6 4V6L7 10zm12-2a5 5 0 0 1 0 8z" fill="#ffffff" fill-opacity=".92"/>
+  </g>
+
+  <text x="600" y="560" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif"
+        font-size="52" font-weight="700" fill="#ffffff">Penerimaan Siswa Baru</text>
+  <text x="600" y="614" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif"
+        font-size="27" fill="#ffffff" fill-opacity=".8">SMK Wira Teknologi Nusantara</text>
+</svg>

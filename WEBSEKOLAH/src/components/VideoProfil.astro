@@ -1,0 +1,115 @@
+---
+/**
+ * VideoProfil — bagian multimedia halaman utama.
+ *
+ * Komponen ini adalah bukti unit "menerapkan perintah eksekusi bahasa
+ * pemrograman berbasis teks, grafik, dan MULTIMEDIA": elemen <video> beserta
+ * kendali putar buatan sendiri, dengan berkasnya di `public/video/`.
+ *
+ * Bila berkasnya belum tersedia, pemutar tetap tampil rapi dengan gambar
+ * poster dan keterangan, sehingga tampilan situs tidak rusak.
+ */
+const daftarSorot = [
+  'Fasilitas bengkel praktik sesuai standar industri',
+  'Pembelajaran berbasis proyek dan teaching factory',
+  'Kemitraan dengan 24 perusahaan mitra',
+];
+---
+
+<section class="py-16 sm:py-24">
+  <div class="wrap grid gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+    <!-- Pemutar video -->
+    <div data-aos="fade-right">
+      <div class="relative overflow-hidden rounded-2xl bg-navy-900 shadow-xl">
+        <video
+          id="video-profil"
+          class="aspect-video w-full"
+          poster="/img/video-poster.jpg"
+          preload="none"
+          playsinline
+          controls
+        >
+          <source src="/video/profil-sekolah.mp4" type="video/mp4" />
+          Peramban Anda tidak mendukung pemutaran video.
+        </video>
+
+        <!-- Tombol putar besar, disembunyikan begitu video dijalankan. -->
+        <button
+          id="tombol-putar"
+          type="button"
+          aria-label="Putar video profil sekolah"
+          class="absolute inset-0 flex items-center justify-center bg-navy-900/45 transition-colors hover:bg-navy-900/30"
+        >
+          <span class="flex h-20 w-20 items-center justify-center rounded-full bg-amber-brand shadow-lg transition-transform hover:scale-110">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="#0b1e3b" class="ml-1">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Keterangan -->
+    <div data-aos="fade-left">
+      <span class="eyebrow">Video Profil</span>
+      <h2 class="rule mt-2 font-display text-3xl font-extrabold text-navy-900 sm:text-4xl">
+        Mengenal Lebih Dekat
+      </h2>
+      <p class="mt-5 text-[15px] leading-relaxed text-slate-600">
+        Saksikan keseharian kegiatan belajar, praktik di bengkel, dan
+        suasana sekolah dalam video profil berdurasi singkat berikut.
+      </p>
+
+      <ul class="mt-7 space-y-3.5">
+        {
+          daftarSorot.map((teks) => (
+            <li class="flex gap-3">
+              <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m5 13 4 4L19 7" />
+                </svg>
+              </span>
+              <span class="text-[15px] text-slate-700">{teks}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<script>
+  /**
+   * Menghubungkan tombol putar buatan sendiri dengan elemen <video> bawaan.
+   *
+   * Tombol disembunyikan saat video berjalan dan ditampilkan lagi ketika
+   * video dijeda atau selesai, sehingga tampilannya selalu sesuai keadaan.
+   */
+  function siapkanVideo(): void {
+    const video = document.getElementById('video-profil') as HTMLVideoElement | null;
+    const tombol = document.getElementById('tombol-putar');
+
+    if (!video || !tombol) return;
+
+    /** Menyembunyikan atau menampilkan tombol putar. */
+    function aturTombol(sembunyikan: boolean): void {
+      tombol!.classList.toggle('hidden', sembunyikan);
+    }
+
+    tombol.addEventListener('click', () => {
+      // play() mengembalikan Promise; kegagalannya ditangkap agar tidak
+      // memunculkan pesan error di konsol ketika berkas video belum ada.
+      video.play().catch(() => {
+        tombol.innerHTML =
+          '<span class="rounded-lg bg-white/95 px-4 py-2.5 text-sm font-semibold text-navy-900">Berkas video belum tersedia</span>';
+      });
+    });
+
+    video.addEventListener('play', () => aturTombol(true));
+    video.addEventListener('pause', () => aturTombol(false));
+    video.addEventListener('ended', () => aturTombol(false));
+  }
+
+  siapkanVideo();
+  document.addEventListener('astro:page-load', siapkanVideo);
+</script>

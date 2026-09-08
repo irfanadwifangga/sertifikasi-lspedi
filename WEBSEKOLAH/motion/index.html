@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="id">
+<!-- Dibuat dengan skill Bang Motion v1.0.0 oleh Bang Tutorial (https://youtube.com/bangtutorial) - MIT -->
+<head>
+<meta charset="utf-8">
+<title>Profil SMK Wira Teknologi Nusantara</title>
+<!--
+  ============================ STYLE BRIEF ============================
+  Tema + 3 kata sifat  : profil SMK teknologi otomotif — percaya diri, membumi, bertenaga
+  Palet (dari brand)   : utama #f5a524  latar #0b1e3b  aksen #f4efe6
+  Font display/pendamping : Archivo Black / Space Grotesk
+  Bahasa latar         : poster color-block
+  Tanda tangan gerak   : blok warna menabrak tepi frame
+  Gerak latar (§7c #8) : grid yang bernapas (skala + opacity, tanpa scroll)
+  Permukaan latar (§7d): gradien diagonal + grid + grain  (3 lapis, tidak flat)
+  Transisi (§4c)       : #1 push-through 3D · #6 whip + blur · #3 objek tebal melewati lensa · #4 sapuan cahaya
+  Momen istimewa       : kamera menembus lubang angka 1996, perisai tersusun dari pecahan blok amber
+  =====================================================================
+
+  Three.js SENGAJA TIDAK DIPAKAI. Latar WebGL (nebula/debu/bloom) hanya satu
+  bahasa latar dari delapan; arah gaya di sini poster color-block, jadi
+  seluruh kedalaman dikerjakan dengan CSS 3D (perspective + translateZ).
+
+  Benang merah visual: SISTEM BLOK AMBER. Blok yang sama menabrak tepi,
+  menyusun perisai, menjadi tile keahlian, lalu menjadi barisan mitra.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<style>
+:root{
+  --navy:#0b1e3b; --navy-2:#173c72; --navy-3:#1f4d8f;
+  --amber:#f5a524; --amber-deep:#c77c05;
+  --cream:#f4efe6; --ink:#0b1e3b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;background:#05101f;overflow:hidden;
+  font-family:"Space Grotesk",system-ui,sans-serif;color:var(--cream)}
+#filters{position:fixed;width:0;height:0;opacity:0;pointer-events:none}
+
+/* Panggung dipatok 1920x1080 lalu discale ke jendela — komposisi tetap. */
+#stage{position:fixed;left:50%;top:50%;width:1920px;height:1080px;
+  transform:translate(-50%,-50%) scale(1);overflow:hidden;background:var(--navy);
+  perspective:1600px}
+#world{position:absolute;inset:0;perspective:1400px;will-change:transform}
+
+/* ---------- LAPISAN LATAR (§7d: 3 lapis, tidak flat) ---------- */
+#bg-dark{position:absolute;inset:0;
+  background:
+    radial-gradient(62% 48% at 22% 18%, rgba(31,77,143,.55), transparent 62%),
+    linear-gradient(152deg,#0d2447 0%, var(--navy) 46%, #071628 100%)}
+#bg-cream{position:absolute;inset:0;opacity:0;
+  background:
+    radial-gradient(58% 46% at 78% 22%, rgba(245,165,36,.20), transparent 64%),
+    linear-gradient(158deg,#fbf7f0 0%, var(--cream) 52%, #e9e0d2 100%)}
+#bg-amber{position:absolute;inset:0;opacity:0;
+  background:linear-gradient(150deg,#ffbe4d 0%, var(--amber) 48%, var(--amber-deep) 100%)}
+
+/* Grid bernapas — gerak latar (§7c #8). Skala & opacity di-tween dari timeline. */
+#grid{position:absolute;inset:-12%;opacity:.20;will-change:transform,opacity;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(245,165,36,.55) 0 1.5px, transparent 1.5px 96px),
+    repeating-linear-gradient(90deg, rgba(245,165,36,.55) 0 1.5px, transparent 1.5px 96px);
+  mask-image:radial-gradient(72% 62% at 50% 50%, #000 30%, transparent 78%)}
+
+/* Grain statis: memberi tekstur cetak, tidak mengandung keacakan per frame. */
+#grain{position:absolute;inset:0;opacity:.16;mix-blend-mode:overlay;pointer-events:none}
+
+/* ---------- TEKS ---------- */
+.scene{position:absolute;inset:0;opacity:0;visibility:hidden}
+.line{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  font-family:"Archivo Black",system-ui,sans-serif;font-weight:400;
+  letter-spacing:-.02em;line-height:1.02;white-space:nowrap;opacity:0;
+  text-shadow:0 6px 34px rgba(4,12,26,.55)}
+.line.sm{font-size:78px}.line.md{font-size:84px}.line.lg{font-size:150px}
+.line.ink{color:var(--ink);text-shadow:none}
+.wd{display:inline-block;white-space:nowrap}
+.ch{display:inline-block;will-change:transform,opacity,filter;opacity:0}
+.txt2{display:inline-block;opacity:0}
+
+/* Label dunia — tingkat teks KEDUA (maksimum dua per adegan). */
+.label{position:absolute;font-family:"Space Grotesk",sans-serif;font-weight:700;
+  font-size:34px;letter-spacing:.34em;text-transform:uppercase;opacity:0}
+
+/* Kata sorotan: varian COLOR (menu §1) — tanpa pill, tanpa ornamen bintang. */
+.hl{position:relative;display:inline-block}
+.hl .hl-t{position:relative;opacity:0;color:var(--amber)}
+.hl.on-amber .hl-t{color:var(--cream);padding:0 .16em}
+/* Slab navy yang tumbuh dari kiri — blok yang sama, kini jadi sorotan kata. */
+.hl .slab{position:absolute;left:0;top:.06em;right:0;bottom:.16em;background:var(--navy);
+  transform:scaleX(0);transform-origin:0 50%;border-radius:8px}
+
+/* Angka raksasa: sengaja terpotong tepi frame (ciri poster color-block). */
+.giant{position:absolute;font-family:"Archivo Black",sans-serif;
+  font-size:560px;line-height:.82;letter-spacing:-.045em;opacity:0;
+  font-variant-numeric:tabular-nums}
+
+/* ---------- SISTEM BLOK AMBER (benang merah visual) ---------- */
+.blok{position:absolute;background:var(--amber);opacity:0;will-change:transform}
+.blok.deep{background:var(--amber-deep)}
+.blok.cream{background:var(--cream)}
+.blok.navy{background:var(--navy)}
+
+/* Tile keahlian — blok yang sama, kini berisi ikon. */
+.tile{position:absolute;width:340px;height:340px;border-radius:30px;
+  box-shadow:0 26px 60px -28px rgba(11,30,59,.55);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;
+  opacity:0;will-change:transform;transform-style:preserve-3d}
+.tile .kode{font-family:"Archivo Black",sans-serif;font-size:44px;letter-spacing:.02em}
+
+/* Perisai: tersusun dari pecahan blok (momen istimewa). */
+#perisai{position:absolute;left:50%;top:42%;width:260px;height:300px;
+  margin:-150px 0 0 -130px;transform-style:preserve-3d}
+#perisai .pcs{position:absolute;inset:0;opacity:0}
+
+/* Batang mitra industri. */
+.batang{position:absolute;bottom:0;width:54px;background:var(--amber);
+  transform-origin:50% 100%;transform:scaleY(0);border-radius:6px 6px 0 0}
+
+/* ---------- TRANSISI ---------- */
+.leak{position:absolute;left:50%;top:50%;width:2400px;height:2400px;
+  margin:-1200px 0 0 -1200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,214,140,.95),rgba(245,165,36,.42) 32%,transparent 72%);
+  filter:blur(70px);mix-blend-mode:screen;opacity:0;pointer-events:none;z-index:40}
+/* Kartu tebal yang melewati lensa (§4c #3) — punya ketebalan, bukan bidang datar. */
+#kartu{position:absolute;left:50%;top:50%;width:620px;height:400px;
+  margin:-200px 0 0 -310px;border-radius:22px;opacity:0;z-index:35;
+  background:linear-gradient(150deg,#ffc766,var(--amber) 52%,var(--amber-deep));
+  box-shadow:0 0 0 14px rgba(11,30,59,.9), 0 40px 90px rgba(0,0,0,.5);
+  transform-style:preserve-3d}
+.vignette{position:absolute;inset:0;pointer-events:none;z-index:10;opacity:.75;
+  background:radial-gradient(ellipse 82% 74% at 50% 50%,transparent 42%,rgba(3,10,20,.62) 88%,rgba(3,10,20,.9) 100%)}
+
+/* ---------- PANEL DEV (hanya ?debug=1) ---------- */
+#ui{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);display:none;
+  align-items:center;gap:14px;padding:11px 18px;border-radius:16px;
+  background:rgba(11,30,59,.92);border:1px solid rgba(245,165,36,.28);
+  font-size:13px;color:#cdd6e4;z-index:60}
+#ui.on{display:flex}
+#ui button{background:var(--amber);color:var(--navy);border:none;padding:8px 16px;
+  border-radius:9px;font:inherit;font-weight:700;cursor:pointer}
+#scrub{width:340px;accent-color:var(--amber)}
+#clock{font-variant-numeric:tabular-nums;min-width:5.6ch;text-align:right}
+</style>
+</head>
+<body>
+
+<svg id="filters"><defs>
+  <filter id="grain-f"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3" seed="7"/></filter>
+</defs></svg>
+
+<div id="stage">
+  <div id="world">
+    <div id="bg-dark"></div>
+    <div id="bg-cream"></div>
+    <div id="bg-amber"></div>
+    <div id="grid"></div>
+    <svg id="grain" width="1920" height="1080"><rect width="1920" height="1080" filter="url(#grain-f)"/></svg>
+
+    <!-- ===== S1 · 0,0–3,2 — Berdiri sejak 1996 ===== -->
+    <section class="scene" id="s1">
+      <div class="giant" id="g96" style="left:-40px;top:112px;color:var(--cream)">1996</div>
+      <div class="label" id="l1" style="left:110px;top:648px;color:var(--amber);font-size:40px">Berdiri sejak</div>
+      <i class="blok" id="b1" style="right:0;top:176px;width:470px;height:38px"></i>
+      <i class="blok deep" id="b1b" style="right:0;top:238px;width:280px;height:38px"></i>
+      <i class="blok cream" id="b1c" style="right:0;top:300px;width:150px;height:38px"></i>
+    </section>
+
+    <!-- ===== S2 · 3,2–6,8 — Identitas ===== -->
+    <section class="scene" id="s2">
+      <div id="perisai">
+        <svg class="pcs" viewBox="0 0 260 300" id="pcs">
+          <path id="p1" d="M130 6 246 48v70H130z" fill="var(--amber)"/>
+          <path id="p2" d="M130 6 14 48v70h116z" fill="var(--amber-deep)"/>
+          <path id="p3" d="M14 118h116v176C74 276 14 226 14 168z" fill="var(--amber)"/>
+          <path id="p4" d="M246 118H130v176c56-18 116-68 116-126z" fill="#ffca6b"/>
+        </svg>
+      </div>
+      <h1 class="line md" id="ln2" style="top:742px">
+        <span class="txt">SMK</span>&nbsp;<span class="hl" id="hl2"><span class="hl-t">Wira Teknologi</span></span>&nbsp;<span class="txt">Nusantara</span><span class="txt2">.</span>
+      </h1>
+      <i class="blok" id="b2" style="left:0;bottom:0;width:640px;height:22px"></i>
+    </section>
+
+    <!-- ===== S3 · 6,8–10,4 — Program keahlian ===== -->
+    <section class="scene" id="s3">
+      <h1 class="line sm ink" id="ln3" style="top:296px">
+        <span class="txt">Tiga</span>&nbsp;<span class="hl" id="hl3"><span class="hl-t">program keahlian</span></span><span class="txt2">.</span>
+      </h1>
+      <div class="tile" id="t1" style="left:250px;top:496px;background:linear-gradient(158deg,#ffc766,var(--amber-deep))">
+        <svg width="124" height="124" viewBox="0 0 24 24" fill="var(--navy)"><path d="M14.7 6.3a4 4 0 0 1-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 0 1 5.4-5.4l-2.5 2.5 2.1 2.1z"/></svg>
+        <span class="kode" style="color:var(--navy)">TKRO</span>
+      </div>
+      <div class="tile" id="t2" style="left:790px;top:496px;background:linear-gradient(158deg,#2a5fa8,var(--navy))">
+        <svg width="124" height="124" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.6"><circle cx="6" cy="18" r="3.6"/><circle cx="18" cy="18" r="3.6"/><path d="M9 8h6l3 6M9 8 6 14"/></svg>
+        <span class="kode" style="color:var(--amber)">TBSM</span>
+      </div>
+      <i class="blok deep" id="b3" style="left:0;top:0;width:186px;height:250px"></i>
+      <i class="blok" id="b3b" style="left:0;bottom:0;width:820px;height:104px"></i>
+      <div class="tile" id="t3" style="left:1330px;top:496px;background:linear-gradient(158deg,#ffc766,var(--amber-deep))">
+        <svg width="124" height="124" viewBox="0 0 24 24" fill="var(--navy)"><path d="M8 8h8v8H8zM4 9h2v2H4zm0 4h2v2H4zm14-4h2v2h-2zm0 4h2v2h-2zM9 4h2v2H9zm4 0h2v2h-2zM9 18h2v2H9zm4 0h2v2h-2z"/></svg>
+        <span class="kode" style="color:var(--navy)">TEI</span>
+      </div>
+    </section>
+
+    <!-- ===== S4 · 10,4–13,8 — Jumlah peserta didik ===== -->
+    <section class="scene" id="s4">
+      <div class="giant" id="gnum" style="left:50%;top:214px;color:var(--amber)">0</div>
+      <div class="label" id="l4" style="left:50%;top:806px;color:var(--cream);font-size:40px">Peserta didik aktif</div>
+      <i class="blok cream" id="b4" style="left:0;top:452px;width:168px;height:400px"></i>
+      <i class="blok deep" id="b4b" style="right:0;bottom:0;width:300px;height:120px"></i>
+    </section>
+
+    <!-- ===== S5 · 13,8–17,0 — Mitra industri ===== -->
+    <section class="scene" id="s5">
+      <h1 class="line md ink" id="ln5" style="left:150px;top:392px;transform:none">
+        <span class="hl" id="hl5"><span class="hl-t">24</span></span>&nbsp;<span class="txt">mitra industri</span><span class="txt2">.</span>
+      </h1>
+      <i class="blok navy" id="b5" style="right:0;top:0;width:460px;height:112px"></i>
+      <i class="blok deep" id="b5b" style="right:0;top:112px;width:230px;height:44px"></i>
+      <div id="batangan" style="position:absolute;left:150px;top:560px;width:1620px;height:280px"></div>
+    </section>
+
+    <!-- ===== S6 · 17,0–20,5 — Penutup ===== -->
+    <section class="scene" id="s6">
+      <svg id="lambang6" viewBox="0 0 260 300" width="128" height="148"
+           style="position:absolute;left:50%;top:236px;margin-left:-64px;opacity:0">
+        <path d="M130 6 246 48v70H130z" fill="var(--navy)"/>
+        <path d="M130 6 14 48v70h116z" fill="#08172c"/>
+        <path d="M14 118h116v176C74 276 14 226 14 168z" fill="var(--navy)"/>
+        <path d="M246 118H130v176c56-18 116-68 116-126z" fill="#1b3a68"/>
+      </svg>
+      <h1 class="line lg" id="ln6" style="top:520px;color:var(--navy)">
+        <span class="txt">Siap</span>&nbsp;<span class="hl on-amber" id="hl6"><i class="slab"></i><span class="hl-t">kerja</span></span><span class="txt2">.</span>
+      </h1>
+      <div class="label" id="l6" style="left:50%;top:660px;color:var(--navy);font-size:38px;opacity:0">Terampil &middot; Berkarakter</div>
+      <i class="blok navy" id="b6" style="left:0;top:0;width:100%;height:14px"></i>
+      <i class="blok navy" id="b6b" style="left:0;bottom:0;width:100%;height:14px"></i>
+    </section>
+
+  </div>
+
+  <div id="kartu"></div>
+  <div class="leak" id="leak"></div>
+  <div class="vignette"></div>
+</div>
+
+<div id="ui">
+  <button id="btn-play">Pause</button><button id="btn-restart">Ulang</button>
+  <input id="scrub" type="range" min="0" max="1000" value="0">
+  <span id="clock">0.00s</span>
+</div>
+
+<script>
+/* =====================================================================
+   Seluruh visual adalah fungsi murni dari tl.time().
+   Tidak ada Date.now() maupun Math.random() di jalur render (Hukum #2).
+   ===================================================================== */
+const $  = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+/* ---------- Motion blur BERARAH (§2) ---------- */
+const defs = $('#filters defs');
+let fc = 0;
+function makeBlur() {
+  const id = 'mb' + (fc++), NS = 'http://www.w3.org/2000/svg';
+  const f = document.createElementNS(NS, 'filter');
+  f.id = id;
+  f.setAttribute('x', '-70%'); f.setAttribute('y', '-70%');
+  f.setAttribute('width', '240%'); f.setAttribute('height', '240%');
+  const g = document.createElementNS(NS, 'feGaussianBlur');
+  g.setAttribute('stdDeviation', '0 0');
+  f.appendChild(g); defs.appendChild(f);
+  return { url: `url(#${id})`, node: g };
+}
+function blurTween(tl, targets, at, from, to, dur, { ease = 'power3.out', ax = 1, ay = .08 } = {}) {
+  const b = makeBlur(), o = { v: from };
+  tl.set(targets, { filter: b.url }, at);
+  tl.to(o, { v: to, duration: dur, ease, onUpdate() {
+    b.node.setAttribute('stdDeviation', `${(o.v * ax).toFixed(2)} ${(o.v * ay).toFixed(2)}`);
+  } }, at);
+  tl.set(targets, { filter: 'none' }, at + dur);
+}
+const VERT = { ax: .1, ay: 1 };
+
+/* ---------- Split per huruf ---------- */
+function splitChars(el) {
+  const words = (el.textContent || '').split(' ');
+  el.textContent = '';
+  const out = [];
+  words.forEach((w, i) => {
+    const wr = document.createElement('span');
+    wr.className = 'wd';
+    for (const c of w) {
+      const s = document.createElement('span');
+      s.className = 'ch'; s.textContent = c;
+      wr.appendChild(s); out.push(s);
+    }
+    el.appendChild(wr);
+    if (i < words.length - 1) {
+      const sp = document.createElement('span');
+      sp.className = 'ch'; sp.innerHTML = '&nbsp;';
+      el.appendChild(sp); out.push(sp);
+    }
+  });
+  return out;
+}
+
+/* ---------- Batang mitra dibuat dari data, bukan diketik satu-satu ---------- */
+const JUMLAH_MITRA = 24;
+const wadahBatang = $('#batangan');
+for (let i = 0; i < JUMLAH_MITRA; i++) {
+  const b = document.createElement('i');
+  b.className = 'batang';
+  b.style.left = (i * 67) + 'px';
+  // Tinggi bervariasi lewat sinus — berpola, bukan acak, agar deterministik.
+  b.style.height = (120 + Math.sin(i * .9) * 70 + (i % 3) * 26) + 'px';
+  wadahBatang.appendChild(b);
+}
+const batangSemua = $$('.batang');
+
+/* =====================================================================
+   TIMELINE — satu-satunya tempat waktu ditulis
+   ===================================================================== */
+const DURATION = 20.5;
+const tl = gsap.timeline({ paused: true });
+const rig = $('#world'), leak = $('#leak'), kartu = $('#kartu');
+
+/* Sapuan cahaya (§4c #4), bergantian sisi. */
+let sisiLeak = 1;
+const sweep = (at, dur = 1.0) => {
+  const sisi = (sisiLeak *= -1);
+  tl.fromTo(leak, { x: sisi * 1500, y: -240, scale: .85 },
+    { x: sisi * 320, y: 130, scale: 1.14, duration: dur, ease: 'sine.out', immediateRender: false }, at);
+  tl.fromTo(leak, { opacity: 0 }, { opacity: .8, duration: dur * .4, ease: 'sine.in', immediateRender: false }, at);
+  tl.to(leak, { opacity: 0, duration: dur * .6, ease: 'sine.out' }, at + dur * .4);
+};
+
+/* Push-through 3D (§4c #1): dorong masuk, potong, tarik mundur. */
+const camThrough = (atCut, { push = 2, from = 1.5, inDur = .5, outDur = .95,
+                             oOut = '50% 50%', oIn = '50% 50%' } = {}) => {
+  tl.set(rig, { transformOrigin: oOut }, atCut - inDur);
+  tl.to(rig, { scale: push, duration: inDur, ease: 'power2.in' }, atCut - inDur);
+  tl.set(rig, { transformOrigin: oIn, scale: from }, atCut);
+  tl.to(rig, { scale: 1, duration: outDur, ease: 'power3.out' }, atCut);
+};
+
+/* Whip + blur berarah (§4c #6). */
+const whip = (at, arah = 1, dur = .34) => {
+  tl.to(rig, { x: -arah * 180, duration: dur * .5, ease: 'power2.in' }, at);
+  tl.set(rig, { x: arah * 180 }, at + dur * .5);
+  tl.to(rig, { x: 0, duration: dur * .5, ease: 'power2.out' }, at + dur * .5);
+  blurTween(tl, rig, at, 0, 22, dur, { ease: 'sine.inOut' });
+};
+
+/* Objek tebal melewati lensa (§4c #3) — kartu berbevel, bukan bidang datar. */
+const kartuLewat = (at, dur = .9) => {
+  tl.fromTo(kartu, { opacity: 1, scale: .18, rotateY: -46, rotateZ: -8, z: -600 },
+    { scale: 3.4, rotateY: 16, rotateZ: 4, z: 300, duration: dur, ease: 'power2.in', immediateRender: false }, at);
+  tl.to(kartu, { opacity: 0, duration: .18 }, at + dur - .1);
+  blurTween(tl, kartu, at, 0, 26, dur, { ease: 'power2.in' });
+};
+
+/* Tanda tangan gerak: blok menabrak tepi frame lalu berhenti mendadak. */
+const blokTabrak = (el, at, dari = { x: 420 }, dur = .52) =>
+  tl.fromTo(el, { opacity: 1, ...dari },
+    { x: 0, y: 0, duration: dur, ease: 'power4.out', immediateRender: false }, at);
+
+/* Pintu masuk/keluar teks (§1). */
+const inUp    = (ch, el, at, { dur = .8, st = .022 } = {}) => { tl.fromTo(ch, { opacity: 0, yPercent: 60, scaleY: 1.4 }, { opacity: 1, yPercent: 0, scaleY: 1, duration: dur, ease: 'power4.out', stagger: st, immediateRender: false }, at); blurTween(tl, el, at, 30, 0, dur, VERT); };
+const inLeft  = (ch, el, at, { dur = .75, st = .018 } = {}) => { tl.fromTo(ch, { opacity: 0, xPercent: -45 }, { opacity: 1, xPercent: 0, duration: dur, ease: 'power4.out', stagger: st, immediateRender: false }, at); blurTween(tl, el, at, 50, 0, dur, { ease: 'power4.out' }); };
+const outUp   = (ch, el, at, { dur = .4, st = .01 } = {}) => { tl.to(ch, { opacity: 0, yPercent: -70, duration: dur, ease: 'power2.in', stagger: st }, at); blurTween(tl, el, at, 0, 45, dur + .1, { ease: 'power2.in', ...VERT }); };
+const outLeft = (ch, el, at, { dur = .4, st = .01 } = {}) => { tl.to(ch, { opacity: 0, xPercent: -60, duration: dur, ease: 'power2.in', stagger: st }, at); blurTween(tl, el, at, 0, 55, dur + .1, { ease: 'power2.in' }); };
+const mark    = (hl, at) => tl.fromTo($('.hl-t', hl), { opacity: 0, yPercent: 60 }, { opacity: 1, yPercent: 0, duration: .7, ease: 'power4.out', immediateRender: false }, at);
+const popDot  = (el, at) => tl.fromTo(el, { opacity: 0, yPercent: 60 }, { opacity: 1, yPercent: 0, duration: .5, ease: 'power4.out', immediateRender: false }, at);
+/* `tengah` memusatkan lewat xPercent, bukan lewat CSS — lihat catatan di markup. */
+const labelIn = (el, at, dx = -40, tengah = false) => tl.fromTo(el,
+  { opacity: 0, x: dx, xPercent: tengah ? -50 : 0, letterSpacing: '.6em' },
+  { opacity: 1, x: 0, xPercent: tengah ? -50 : 0, letterSpacing: '.34em', duration: .8, ease: 'power3.out', immediateRender: false }, at);
+
+/* ---------- GERAK LATAR: grid bernapas (§7c #8), berjalan sepanjang video ---------- */
+tl.fromTo('#grid', { scale: 1, opacity: .2 },
+  { scale: 1.045, opacity: .28, duration: 7, ease: 'sine.inOut', yoyo: true, repeat: 2, immediateRender: false }, 0);
+
+/* Latar dikembalikan ke keadaan awal di t=0 supaya loop-nya bersih. */
+tl.set(['#bg-cream', '#bg-amber'], { opacity: 0 }, 0);
+tl.set('#bg-dark', { opacity: 1 }, 0);
+tl.set(kartu, { opacity: 0 }, 0);
+tl.set(rig, { scale: 1, x: 0 }, 0);
+
+/* =====================================================================
+   S1 · 0,0–3,2 — "Berdiri sejak 1996"
+   ===================================================================== */
+const s1 = $('#s1'), g96 = $('#g96');
+tl.set(s1, { autoAlpha: 1 }, 0);
+tl.fromTo(g96, { opacity: 0, scale: 1.35, y: 60 },
+  { opacity: 1, scale: 1, y: 0, duration: 1.25, ease: 'power3.out', immediateRender: false }, .15);
+blurTween(tl, g96, .15, 26, 0, 1.1, VERT);
+labelIn($('#l1'), .95);
+blokTabrak($('#b1'), 1.15, { x: 420 });
+blokTabrak($('#b1b'), 1.32, { x: 300 });
+blokTabrak($('#b1c'), 1.46, { x: 220 });
+// Kamera bernapas — tidak pernah benar-benar diam.
+tl.to(rig, { scale: 1.035, duration: 2.6, ease: 'sine.inOut' }, .4);
+
+tl.to([$('#l1'), $('#b1'), $('#b1b'), $('#b1c')], { opacity: 0, duration: .3, ease: 'power2.in' }, 2.65);
+tl.to(g96, { opacity: 0, duration: .35, ease: 'power2.in' }, 2.9);
+tl.set(s1, { autoAlpha: 0 }, 3.25);
+
+/* MOMEN ISTIMEWA — kamera menembus lubang angka "9" pada 1996. */
+sweep(2.7, .85);
+camThrough(3.2, { push: 3.1, from: 1.55, inDur: .55, outDur: 1.0, oOut: '24% 42%', oIn: '50% 50%' });
+
+/* =====================================================================
+   S2 · 3,2–6,8 — Identitas: perisai tersusun dari pecahan blok
+   ===================================================================== */
+const s2 = $('#s2'), ln2 = $('#ln2');
+const ch2 = $$('.txt', ln2).map(splitChars).flat();
+tl.set(s2, { autoAlpha: 1 }, 3.2);
+
+// Empat pecahan mendarat dari empat arah lalu mengunci jadi perisai.
+const pcsData = [
+  ['#p1', { x: 260, y: -220, rotate: 24 }],
+  ['#p2', { x: -260, y: -220, rotate: -24 }],
+  ['#p3', { x: -220, y: 240, rotate: -18 }],
+  ['#p4', { x: 240, y: 240, rotate: 18 }],
+];
+pcsData.forEach(([sel, dari], i) => {
+  tl.fromTo(sel, { opacity: 0, ...dari, scale: .7 },
+    { opacity: 1, x: 0, y: 0, rotate: 0, scale: 1, duration: .78, ease: 'power4.out', immediateRender: false },
+    3.35 + i * .12);
+});
+tl.set('.pcs', { opacity: 1 }, 3.3);
+tl.fromTo('#perisai', { scale: 1.5, rotateY: -28 },
+  { scale: 1, rotateY: 0, duration: 1.3, ease: 'power3.out', immediateRender: false }, 3.35);
+tl.to('#perisai', { y: -18, duration: 2.2, ease: 'sine.inOut' }, 4.6);
+
+tl.set(ln2, { autoAlpha: 1 }, 4.55);
+inUp(ch2, ln2, 4.6);
+mark($('#hl2'), 5.0);
+popDot($('.txt2', ln2), 5.3);
+blokTabrak($('#b2'), 4.9, { x: -700 });
+tl.to(rig, { scale: 1, duration: 2.4, ease: 'sine.inOut' }, 4.4);
+
+outUp(ch2, ln2, 6.18);
+tl.to([$('#hl2'), $('.txt2', ln2)], { opacity: 0, yPercent: -70, duration: .38, ease: 'power2.in' }, 6.18);
+tl.to(['#perisai', '#b2'], { opacity: 0, scale: .8, duration: .4, ease: 'power2.in' }, 6.24);
+tl.set(s2, { autoAlpha: 0 }, 6.7);
+
+/* Transisi ke segmen terang: whip + latar berganti di balik frame tertutup. */
+whip(6.68, 1, .34);
+tl.to('#bg-cream', { opacity: 1, duration: .01 }, 6.7);
+tl.to('.vignette', { opacity: .28, duration: .3 }, 6.7);
+tl.to('#grid', { opacity: .12, duration: .3 }, 6.7);
+
+/* =====================================================================
+   S3 · 6,8–10,4 — Tiga program keahlian (latar terang)
+   ===================================================================== */
+const s3 = $('#s3'), ln3 = $('#ln3');
+const ch3 = $$('.txt', ln3).map(splitChars).flat();
+tl.set(s3, { autoAlpha: 1 }, 6.7);
+tl.set(ln3, { autoAlpha: 1 }, 6.72);
+blokTabrak($('#b3'), 6.72, { x: -260 }, .46);
+blokTabrak($('#b3b'), 6.78, { y: 160 }, .5);
+inLeft(ch3, ln3, 6.86);
+mark($('#hl3'), 7.3);
+popDot($('.txt2', ln3), 7.58);
+
+// Tile datang dari kedalaman sambil berputar (§4c #2).
+['#t1', '#t2', '#t3'].forEach((sel, i) => {
+  tl.fromTo(sel, { opacity: 0, y: 150, rotateY: -42, z: -420 },
+    { opacity: 1, y: 0, rotateY: 0, z: 0, duration: .9, ease: 'power3.out', immediateRender: false },
+    7.34 + i * .16);
+});
+tl.to(rig, { scale: 1.03, duration: 2.6, ease: 'sine.inOut' }, 7.2);
+
+tl.to(['#t1', '#t2', '#t3'], { opacity: 0, y: -90, rotateY: 30, duration: .42, ease: 'power2.in', stagger: .05 }, 9.9);
+tl.to(['#b3', '#b3b'], { opacity: 0, duration: .35, ease: 'power2.in' }, 9.95);
+outLeft(ch3, ln3, 9.85);
+tl.to([$('#hl3'), $('.txt2', ln3)], { opacity: 0, xPercent: -60, duration: .4, ease: 'power2.in' }, 9.85);
+tl.set(s3, { autoAlpha: 0 }, 10.45);
+
+/* Kembali ke latar gelap di balik kartu tebal yang melewati lensa. */
+kartuLewat(10.0, .85);
+tl.to('#bg-cream', { opacity: 0, duration: .01 }, 10.42);
+tl.to('.vignette', { opacity: .75, duration: .3 }, 10.42);
+tl.to('#grid', { opacity: .22, duration: .3 }, 10.42);
+
+/* =====================================================================
+   S4 · 10,4–13,8 — 898 peserta didik (angka hidup, deterministik)
+   ===================================================================== */
+const s4 = $('#s4'), gnum = $('#gnum');
+const TOTAL_SISWA = 898;
+tl.set(s4, { autoAlpha: 1 }, 10.45);
+tl.fromTo(gnum, { opacity: 0, scale: .82, xPercent: -50 },
+  { opacity: 1, scale: 1, xPercent: -50, duration: .7, ease: 'power3.out', immediateRender: false }, 10.6);
+
+// Angka dihitung dari progres tween, bukan dari jam sistem.
+const hitung = { v: 0 };
+tl.to(hitung, { v: TOTAL_SISWA, duration: 1.5, ease: 'power2.out',
+  onUpdate() { gnum.textContent = Math.round(hitung.v).toString(); } }, 10.7);
+// Reset eksplisit supaya scrub mundur tidak meninggalkan angka lama.
+tl.set(hitung, { v: 0, onComplete: () => { gnum.textContent = '0'; } }, 10.45);
+
+labelIn($('#l4'), 11.9, 0, true);
+blokTabrak($('#b4'), 11.2, { x: -260 });
+blokTabrak($('#b4b'), 11.45, { x: 380 });
+tl.to(rig, { scale: 1.04, duration: 2.5, ease: 'sine.inOut' }, 10.6);
+
+tl.to([$('#l4'), $('#b4'), $('#b4b')], { opacity: 0, y: -70, duration: .38, ease: 'power2.in', stagger: .04 }, 13.35);
+tl.to(gnum, { opacity: 0, y: -70, duration: .38, ease: 'power2.in' }, 13.35);
+tl.set(s4, { autoAlpha: 0 }, 13.85);
+
+/* Rack focus ringan + whip ke sisi lain. */
+whip(13.6, -1, .34);
+tl.to('#bg-cream', { opacity: 1, duration: .01 }, 13.72);
+tl.to('.vignette', { opacity: .28, duration: .3 }, 13.72);
+tl.to('#grid', { opacity: .12, duration: .3 }, 13.72);
+
+/* =====================================================================
+   S5 · 13,8–17,0 — 24 mitra industri (latar terang, teks kiri)
+   ===================================================================== */
+const s5 = $('#s5'), ln5 = $('#ln5');
+const ch5 = $$('.txt', ln5).map(splitChars).flat();
+tl.set(s5, { autoAlpha: 1 }, 13.74);
+tl.set(ln5, { autoAlpha: 1 }, 13.76);
+blokTabrak($('#b5'), 13.76, { x: 500 }, .46);
+blokTabrak($('#b5b'), 13.86, { x: 300 }, .44);
+mark($('#hl5'), 13.9);
+inLeft(ch5, ln5, 14.0);
+popDot($('.txt2', ln5), 14.45);
+
+// Barisan batang naik berurutan — blok yang sama, kini jadi data.
+tl.to(batangSemua, { scaleY: 1, duration: .55, ease: 'power3.out', stagger: .028 }, 14.05);
+tl.to(rig, { scale: 1.03, duration: 2.4, ease: 'sine.inOut' }, 14.0);
+
+tl.to(batangSemua, { scaleY: 0, duration: .28, ease: 'power2.in', stagger: .01 }, 16.2);
+tl.to(['#b5', '#b5b'], { opacity: 0, duration: .32, ease: 'power2.in' }, 16.25);
+outUp(ch5, ln5, 16.3);
+tl.to([$('#hl5'), $('.txt2', ln5)], { opacity: 0, yPercent: -70, duration: .38, ease: 'power2.in' }, 16.3);
+tl.set(s5, { autoAlpha: 0 }, 16.8);
+
+/* Penutup: latar berubah jadi blok amber penuh di balik sapuan cahaya. */
+sweep(16.5, .8);
+tl.to('#bg-cream', { opacity: 0, duration: .01 }, 16.8);
+tl.to('#bg-amber', { opacity: 1, duration: .01 }, 16.8);
+tl.to('#grid', { opacity: .1, duration: .3 }, 16.8);
+tl.to('.vignette', { opacity: .2, duration: .3 }, 16.8);
+
+/* =====================================================================
+   S6 · 17,0–20,5 — Penutup
+   ===================================================================== */
+const s6 = $('#s6'), ln6 = $('#ln6');
+const ch6 = $$('.txt', ln6).map(splitChars).flat();
+tl.set(s6, { autoAlpha: 1 }, 16.8);
+tl.set(ln6, { autoAlpha: 1 }, 16.82);
+tl.fromTo('#lambang6', { opacity: 0, y: 60, scale: .7 },
+  { opacity: 1, y: 0, scale: 1, duration: .8, ease: 'power4.out', immediateRender: false }, 16.86);
+inUp(ch6, ln6, 17.0, { dur: .9, st: .03 });
+// Slab navy melebar dulu, hurufnya menyusul — blok memimpin, teks mengikuti.
+tl.fromTo('#hl6 .slab', { scaleX: 0 }, { scaleX: 1, duration: .5, ease: 'power4.out', immediateRender: false }, 17.42);
+mark($('#hl6'), 17.58);
+popDot($('.txt2', ln6), 17.94);
+labelIn($('#l6'), 18.18, 0, true);
+blokTabrak($('#b6'), 16.95, { y: -60 });
+blokTabrak($('#b6b'), 17.1, { y: 60 });
+tl.fromTo(rig, { scale: 1.06 }, { scale: 1, duration: 3.2, ease: 'sine.out', immediateRender: false }, 16.85);
+
+// Menutup: semuanya menyusut sedikit agar loop terasa menyambung.
+tl.to([ln6, $('#l6'), '#lambang6'], { opacity: 0, duration: .45, ease: 'power2.in' }, 19.9);
+tl.to(['#b6', '#b6b'], { opacity: 0, duration: .35 }, 19.95);
+tl.to({}, { duration: .01 }, DURATION);
+
+/* =====================================================================
+   PEREKAT
+   ===================================================================== */
+const stage = $('#stage');
+const fit = () => {
+  const s = Math.min(innerWidth / 1920, innerHeight / 1080);
+  stage.style.transform = `translate(-50%,-50%) scale(${s})`;
+};
+addEventListener('resize', fit); fit();
+
+const clock = $('#clock'), scrub = $('#scrub'), btn = $('#btn-play');
+let scrubbing = false;
+(function frame() {
+  const t = tl.time();
+  clock.textContent = t.toFixed(2) + 's';
+  if (!scrubbing) scrub.value = String(t / DURATION * 1000);
+  requestAnimationFrame(frame);
+})();
+
+const toggle = () => {
+  if (tl.paused() || tl.progress() >= 1) {
+    if (tl.progress() >= 1) tl.progress(0);
+    tl.play(); btn.textContent = 'Pause';
+  } else { tl.pause(); btn.textContent = 'Putar'; }
+};
+btn.onclick = toggle;
+$('#btn-restart').onclick = () => { tl.pause(0); tl.play(); btn.textContent = 'Pause'; };
+scrub.addEventListener('pointerdown', () => { scrubbing = true; tl.pause(); btn.textContent = 'Putar'; });
+addEventListener('pointerup', () => scrubbing = false);
+scrub.addEventListener('input', () => { tl.pause(); tl.time(scrub.value / 1000 * DURATION); });
+addEventListener('keydown', e => {
+  if (e.code === 'Space') { e.preventDefault(); toggle(); }
+  if (/^[rR]$/.test(e.key)) { tl.pause(0); tl.play(); }
+  if (/^[hH]$/.test(e.key)) $('#ui').classList.toggle('on');
+});
+
+const Q = new URLSearchParams(location.search);
+if (Q.has('debug')) $('#ui').classList.add('on');
+tl.eventCallback('onComplete', () => { tl.play(0); });
+
+/* Seek sinkron: paksa GSAP menulis gaya sekarang juga (rAF bisa dithrottle). */
+const seek = t => { tl.pause(); tl.time(t, false); if (gsap.ticker.tick) gsap.ticker.tick(); };
+window.OPENER = { tl, DURATION, seek, W: 1920, H: 1080, ready: false };
+
+/* Split diukur SETELAH font termuat — fallback memberi lebar yang salah. */
+document.fonts.ready.then(() => {
+  window.OPENER.ready = true;
+  if (!Q.has('clean')) tl.play(0);
+});
+</script>
+</body>
+</html>

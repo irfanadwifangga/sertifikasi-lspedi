@@ -1,0 +1,27 @@
+{
+  "name": "websekolah",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev --force",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@tailwindcss/vite": "^4.3.3",
+    "aos": "^2.3.4",
+    "astro": "^7.3.1",
+    "chart.js": "^4.5.1",
+    "glightbox": "^3.3.1",
+    "swiper": "^14.2.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2"
+  },
+  "devDependencies": {
+    "@types/aos": "^3.0.8",
+    "puppeteer": "^25.10.0"
+  }
+}

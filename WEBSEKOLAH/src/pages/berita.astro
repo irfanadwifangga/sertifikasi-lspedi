@@ -1,0 +1,133 @@
+---
+/**
+ * HALAMAN 5 — BERITA
+ *
+ * Menampilkan seluruh berita kegiatan sekolah, diurutkan dari yang terbaru,
+ * dengan kotak pencarian yang menyaring secara langsung saat diketik.
+ */
+import Layout from '../layouts/Layout.astro';
+import HeaderHalaman from '../components/HeaderHalaman.astro';
+import KartuBerita from '../components/KartuBerita.astro';
+
+import semuaBerita from '../data/berita.json';
+import { sortByNewest } from '../utils/format';
+
+const berita = sortByNewest(semuaBerita);
+---
+
+<Layout
+  judul="Berita"
+  deskripsi="Kabar terbaru mengenai kegiatan akademik, prestasi, dan pengabdian masyarakat sekolah."
+>
+  <HeaderHalaman
+    remah="Berita"
+    judul="Berita Kegiatan"
+    keterangan="Kumpulan kabar mengenai kegiatan akademik, prestasi peserta didik, dan pengabdian masyarakat yang berlangsung di sekolah."
+  />
+
+  <section class="py-16 sm:py-24">
+    <div class="wrap">
+      <!-- Pencarian -->
+      <div class="mx-auto max-w-xl" data-aos="fade-up">
+        <label for="cari-berita" class="sr-only">Cari berita</label>
+        <div class="relative">
+          <svg
+            width="19"
+            height="19"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+          >
+            <circle cx="11" cy="11" r="7" /><path d="m20 20-3.6-3.6" />
+          </svg>
+          <input
+            id="cari-berita"
+            type="search"
+            placeholder="Cari judul atau kategori berita..."
+            autocomplete="off"
+            class="w-full rounded-xl border border-slate-300 bg-white py-3.5 pl-12 pr-4 text-[15px] outline-none transition-colors focus:border-navy-600 focus:ring-4 focus:ring-navy-600/12"
+          />
+        </div>
+        <p id="hasil-cari" class="mt-3 text-center text-[13px] text-slate-500">
+          Menampilkan {berita.length} berita.
+        </p>
+      </div>
+
+      <!-- Daftar berita -->
+      <div id="daftar-berita" class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {
+          berita.map((b, i) => (
+            <div
+              class="item-berita"
+              data-judul={b.judul.toLowerCase()}
+              data-kategori={b.kategori.toLowerCase()}
+            >
+              <KartuBerita berita={b} urutan={i % 3} />
+            </div>
+          ))
+        }
+      </div>
+
+      <p id="berita-kosong" class="hidden py-16 text-center text-slate-500">
+        Tidak ada berita yang cocok dengan kata kunci tersebut.
+      </p>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  /**
+   * Pencarian berita secara langsung.
+   *
+   * Penyaringan dilakukan di sisi peramban terhadap judul dan kategori.
+   * Pemanggilan ditunda sepersekian detik (debounce) agar penyaringan tidak
+   * dijalankan pada setiap ketukan tombol.
+   */
+  function siapkanPencarianBerita(): void {
+    const input = document.getElementById('cari-berita') as HTMLInputElement | null;
+    const semuaItem = document.querySelectorAll<HTMLElement>('.item-berita');
+    const info = document.getElementById('hasil-cari');
+    const pesanKosong = document.getElementById('berita-kosong');
+
+    if (!input || !info || !pesanKosong) return;
+
+    let penunda: number | undefined;
+
+    /**
+     * Menyaring kartu berita berdasarkan kata kunci.
+     *
+     * @param kunci Kata kunci yang diketik pengguna.
+     */
+    function saring(kunci: string): void {
+      const cari = kunci.trim().toLowerCase();
+      let terlihat = 0;
+
+      semuaItem.forEach((item) => {
+        const judul = item.dataset.judul ?? '';
+        const kategori = item.dataset.kategori ?? '';
+        const cocok = cari === '' || judul.includes(cari) || kategori.includes(cari);
+
+        item.classList.toggle('hidden', !cocok);
+        if (cocok) terlihat += 1;
+      });
+
+      info!.textContent =
+        cari === ''
+          ? `Menampilkan ${semuaItem.length} berita.`
+          : `Ditemukan ${terlihat} berita untuk "${kunci.trim()}".`;
+
+      pesanKosong!.classList.toggle('hidden', terlihat > 0);
+    }
+
+    input.addEventListener('input', () => {
+      window.clearTimeout(penunda);
+      penunda = window.setTimeout(() => saring(input.value), 180);
+    });
+  }
+
+  siapkanPencarianBerita();
+  document.addEventListener('astro:page-load', siapkanPencarianBerita);
+</script>

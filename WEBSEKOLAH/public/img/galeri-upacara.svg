@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800" role="img" aria-label="Upacara Bendera">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#991b1b"/>
+      <stop offset="100%" stop-color="#ef4444"/>
+    </linearGradient>
+    <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+      <path d="M60 0H0V60" fill="none" stroke="#ffffff" stroke-opacity=".08" stroke-width="1.5"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="800" fill="url(#bg)"/>
+  <rect width="1200" height="800" fill="url(#grid)"/>
+
+  <circle cx="1010" cy="150" r="230" fill="#ffffff" fill-opacity=".07"/>
+  <circle cx="180" cy="690" r="180" fill="#ffffff" fill-opacity=".06"/>
+
+  <g transform="translate(600 400) scale(13) translate(-12 -12)">
+    <path d="M5 3h2v18H5zm3 1h11l-2.5 4L19 12H8z" fill="#ffffff" fill-opacity=".92"/>
+  </g>
+
+</svg>

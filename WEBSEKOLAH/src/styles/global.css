@@ -1,0 +1,166 @@
+/* ==========================================================================
+   SMK Wira Teknologi Nusantara — Gaya global
+   Tailwind CSS v4 dimuat sebagai library pihak ketiga, lalu dilengkapi
+   token warna dan komponen khas sekolah pada berkas ini.
+   ========================================================================== */
+
+@import 'tailwindcss';
+
+/* --------------------------------------------------------------------------
+   Token desain. Didefinisikan sekali di sini agar seluruh halaman memakai
+   palet, radius, dan bayangan yang sama.
+   -------------------------------------------------------------------------- */
+@theme {
+  --color-navy-50: #f2f6fc;
+  --color-navy-100: #e2ebf7;
+  --color-navy-200: #c6d8ef;
+  --color-navy-400: #5b82bd;
+  --color-navy-600: #1f4d8f;
+  --color-navy-700: #173c72;
+  --color-navy-800: #112c55;
+  --color-navy-900: #0b1e3b;
+
+  --color-amber-brand: #f5a524;
+  --color-amber-deep: #c77c05;
+
+  --font-display: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+
+/* --------------------------------------------------------------------------
+   Dasar
+   -------------------------------------------------------------------------- */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  font-family: var(--font-body);
+  color: #1f2735;
+  background: #ffffff;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+/* Menjaga gambar tetap proporsional di seluruh situs. */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* --------------------------------------------------------------------------
+   Komponen berulang
+   -------------------------------------------------------------------------- */
+
+/* Pembungkus lebar isi halaman. */
+.wrap {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+/* Tombol utama dan tombol garis. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.35rem;
+  border-radius: 0.65rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition:
+    transform 0.15s ease,
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background: var(--color-amber-brand);
+  color: var(--color-navy-900);
+}
+
+.btn-primary:hover {
+  background: #ffb638;
+}
+
+.btn-outline {
+  border: 1.5px solid rgba(255, 255, 255, 0.55);
+  color: #ffffff;
+}
+
+.btn-outline:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Kartu putih dengan bayangan lembut. */
+.card {
+  background: #ffffff;
+  border: 1px solid #e6ebf2;
+  border-radius: 1rem;
+  overflow: hidden;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 34px -14px rgba(11, 30, 59, 0.32);
+}
+
+/* Label kecil di atas judul bagian. */
+.eyebrow {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-amber-deep);
+}
+
+/* Garis bawah dekoratif pada judul bagian. */
+.rule::after {
+  content: '';
+  display: block;
+  width: 3.5rem;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--color-amber-brand);
+  margin-top: 0.85rem;
+}
+
+.rule-center::after {
+  margin-inline: auto;
+}
+
+/* --------------------------------------------------------------------------
+   Animasi masuk (AOS). Disederhanakan agar tetap halus di perangkat lambat.
+   -------------------------------------------------------------------------- */
+[data-aos] {
+  transition-duration: 0.6s;
+}
+
+/* Hormati preferensi pengguna yang menonaktifkan animasi. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  [data-aos] {
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}

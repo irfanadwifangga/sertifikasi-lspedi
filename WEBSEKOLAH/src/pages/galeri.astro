@@ -1,0 +1,188 @@
+---
+/**
+ * HALAMAN 4 — GALERI
+ *
+ * Menampilkan seluruh dokumentasi kegiatan sekolah. Foto dapat disaring
+ * berdasarkan kategori, dan diperbesar memakai library GLightbox tanpa
+ * berpindah halaman.
+ */
+import Layout from '../layouts/Layout.astro';
+import HeaderHalaman from '../components/HeaderHalaman.astro';
+
+import galeri from '../data/galeri.json';
+import { groupBy } from '../utils/format';
+
+/** Pengelompokan dipakai untuk menghitung jumlah foto tiap kategori. */
+const perKategori = groupBy(galeri, 'kategori');
+
+const kategori = [
+  { nama: 'Semua', jumlah: galeri.length },
+  ...Object.entries(perKategori).map(([nama, isi]) => ({ nama, jumlah: isi.length })),
+];
+---
+
+<Layout
+  judul="Galeri"
+  deskripsi="Dokumentasi kegiatan belajar, praktik bengkel, prestasi, dan kegiatan kesiswaan."
+>
+  <HeaderHalaman
+    remah="Galeri"
+    judul="Galeri Kegiatan"
+    keterangan="Dokumentasi kegiatan belajar mengajar, praktik di bengkel, prestasi, serta kegiatan kesiswaan sepanjang tahun ajaran."
+  />
+
+  <section class="py-16 sm:py-24">
+    <div class="wrap">
+      <!-- Penyaring kategori -->
+      <div class="flex flex-wrap justify-center gap-2.5" data-aos="fade-up">
+        {
+          kategori.map((k, i) => (
+            <button
+              type="button"
+              class="filter-galeri inline-flex items-center gap-2 rounded-full border px-4.5 py-2 text-[13.5px] font-semibold transition-colors"
+              data-kategori={k.nama}
+              data-aktif={i === 0}
+            >
+              {k.nama}
+              <span class="jumlah rounded-full px-1.5 py-0.5 text-[11px] font-bold">{k.jumlah}</span>
+            </button>
+          ))
+        }
+      </div>
+
+      <!-- Kisi foto -->
+      <div id="kisi-galeri" class="mt-12 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+        {
+          galeri.map((g, i) => (
+            <a
+              href={g.berkas}
+              class="item-galeri glightbox group relative block aspect-square overflow-hidden rounded-xl bg-navy-100"
+              data-gallery="galeri-utama"
+              data-title={g.judul}
+              data-description={g.kategori}
+              data-kategori={g.kategori}
+              data-aos="zoom-in"
+              data-aos-delay={(i % 4) * 60}
+            >
+              {/*
+                `h-full!` sengaja dipaksa. Berkas gaya GLightbox memuat
+                `img { height: auto }` TANPA @layer, dan aturan tanpa layer
+                selalu menang atas seluruh utility Tailwind yang berlapis —
+                berapa pun kekhususannya. Tanpa tanda seru, gambar memakai
+                tinggi alaminya dan menyisakan celah di bawah kartu.
+              */}
+              <img
+                src={g.berkas}
+                alt={g.judul}
+                width="1200"
+                height="800"
+                loading="lazy"
+                class="absolute inset-0 h-full! w-full object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+
+              {/* Judul selalu terlihat — kalau hanya muncul saat hover, layar sentuh tidak pernah menampilkannya. */}
+              <div class="absolute inset-x-0 bottom-0 flex flex-col justify-end bg-gradient-to-t from-navy-900/92 via-navy-900/50 to-transparent p-4 pt-12">
+                <span class="text-[13px] font-semibold leading-snug text-white drop-shadow">{g.judul}</span>
+                <span class="mt-0.5 text-[11px] text-navy-200">{g.kategori}</span>
+              </div>
+
+              <span class="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/95 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0b1e3b" stroke-width="2.4" stroke-linecap="round">
+                  <circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5M11 8v6M8 11h6" />
+                </svg>
+              </span>
+            </a>
+          ))
+        }
+      </div>
+
+      <p id="galeri-kosong" class="hidden py-16 text-center text-slate-500">
+        Belum ada foto pada kategori ini.
+      </p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .filter-galeri {
+    border-color: #dbe2ec;
+    background: #ffffff;
+    color: #33415c;
+  }
+
+  .filter-galeri .jumlah {
+    background: #eef2f7;
+    color: #56637a;
+  }
+
+  .filter-galeri:hover {
+    border-color: var(--color-navy-400);
+    color: var(--color-navy-700);
+  }
+
+  .filter-galeri[data-aktif='true'] {
+    border-color: var(--color-navy-800);
+    background: var(--color-navy-800);
+    color: #ffffff;
+  }
+
+  .filter-galeri[data-aktif='true'] .jumlah {
+    background: rgba(255, 255, 255, 0.22);
+    color: #ffffff;
+  }
+</style>
+
+<script>
+  import GLightbox from 'glightbox';
+  import 'glightbox/dist/css/glightbox.min.css';
+
+  /**
+   * Menyiapkan halaman galeri: penyaring kategori dan pembesar foto.
+   *
+   * Instance GLightbox dibuat ulang setiap kali penyaringan berubah, supaya
+   * tombol berikutnya/sebelumnya hanya berpindah di antara foto yang sedang
+   * terlihat — bukan seluruh foto.
+   */
+  function siapkanGaleri(): void {
+    const tombolSemua = document.querySelectorAll<HTMLButtonElement>('.filter-galeri');
+    const itemSemua = document.querySelectorAll<HTMLElement>('.item-galeri');
+    const pesanKosong = document.getElementById('galeri-kosong');
+
+    if (itemSemua.length === 0 || !pesanKosong) return;
+
+    let lightbox = GLightbox({ selector: '.item-galeri:not(.hidden)', touchNavigation: true, loop: true });
+
+    /**
+     * Menyaring foto berdasarkan kategori terpilih.
+     *
+     * @param pilihan Nama kategori, atau "Semua".
+     */
+    function saring(pilihan: string): void {
+      let terlihat = 0;
+
+      itemSemua.forEach((item) => {
+        const cocok = pilihan === 'Semua' || item.dataset.kategori === pilihan;
+        item.classList.toggle('hidden', !cocok);
+        if (cocok) terlihat += 1;
+      });
+
+      pesanKosong!.classList.toggle('hidden', terlihat > 0);
+
+      // Segarkan daftar foto yang dikenali lightbox.
+      lightbox.destroy();
+      lightbox = GLightbox({ selector: '.item-galeri:not(.hidden)', touchNavigation: true, loop: true });
+    }
+
+    tombolSemua.forEach((tombol) => {
+      tombol.addEventListener('click', () => {
+        tombolSemua.forEach((t) => t.setAttribute('data-aktif', 'false'));
+        tombol.setAttribute('data-aktif', 'true');
+
+        saring(tombol.dataset.kategori ?? 'Semua');
+      });
+    });
+  }
+
+  siapkanGaleri();
+  document.addEventListener('astro:page-load', siapkanGaleri);
+</script>

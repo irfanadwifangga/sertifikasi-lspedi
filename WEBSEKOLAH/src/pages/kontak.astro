@@ -1,0 +1,308 @@
+---
+/**
+ * HALAMAN 7 — KONTAK
+ *
+ * Menampilkan informasi kontak sekolah beserta formulir pesan yang
+ * divalidasi di sisi peramban. Formulir sengaja tidak dikirim ke server
+ * mana pun, karena tugas ini tidak mencakup unit pemrosesan basis data.
+ */
+import Layout from '../layouts/Layout.astro';
+import HeaderHalaman from '../components/HeaderHalaman.astro';
+import Judul from '../components/Judul.astro';
+
+import sekolah from '../data/sekolah.json';
+
+const { identitas, kontak } = sekolah;
+
+const kartuKontak = [
+  {
+    judul: 'Alamat Sekolah',
+    isi: `${kontak.alamat}, Kel. ${kontak.kelurahan}, Kec. ${kontak.kecamatan}, ${kontak.kabupaten}, ${kontak.provinsi} ${kontak.kodePos}`,
+    ikon: 'M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z',
+  },
+  { judul: 'Telepon', isi: kontak.telepon, ikon: 'M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z' },
+  { judul: 'Surel', isi: kontak.email, ikon: 'M3 5h18v14H3zm0 2 9 6 9-6' },
+  { judul: 'Jam Layanan', isi: kontak.jamOperasional, ikon: 'M12 3a9 9 0 1 0 9 9 9 9 0 0 0-9-9zm1 9V7h-2v7h6v-2z' },
+];
+
+const pertanyaanUmum = [
+  {
+    tanya: 'Kapan pendaftaran peserta didik baru dibuka?',
+    jawab: 'Pendaftaran umumnya dibuka pada bulan Juni setiap tahun, melalui jalur prestasi dan jalur reguler. Jadwal resmi diumumkan pada halaman Berita.',
+  },
+  {
+    tanya: 'Apa saja berkas yang perlu disiapkan saat mendaftar?',
+    jawab: 'Fotokopi ijazah atau surat keterangan lulus, kartu keluarga, akta kelahiran, dan pas foto terbaru. Seluruh berkas diserahkan langsung ke panitia di sekolah.',
+  },
+  {
+    tanya: 'Apakah tersedia program praktik kerja di industri?',
+    jawab: 'Ya. Seluruh peserta didik kelas XI wajib menjalani Praktik Kerja Lapangan selama enam bulan di salah satu perusahaan mitra sekolah.',
+  },
+  {
+    tanya: 'Bagaimana cara berkunjung ke sekolah?',
+    jawab: 'Kunjungan dapat dilakukan pada jam layanan. Disarankan menghubungi nomor telepon sekolah terlebih dahulu agar dapat disambut petugas yang tepat.',
+  },
+];
+---
+
+<Layout judul="Kontak" deskripsi={`Informasi kontak dan lokasi ${identitas.nama}.`}>
+  <HeaderHalaman
+    remah="Kontak"
+    judul="Hubungi Kami"
+    keterangan="Sampaikan pertanyaan mengenai pendaftaran, kerja sama industri, atau kunjungan sekolah melalui saluran berikut."
+  />
+
+  <!-- Kartu kontak -->
+  <section class="py-16 sm:py-20">
+    <div class="wrap grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        kartuKontak.map((k, i) => (
+          <div class="card p-6" data-aos="fade-up" data-aos-delay={i * 80}>
+            <div class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-navy-800 text-amber-brand">
+              <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d={k.ikon} />
+              </svg>
+            </div>
+            <h2 class="mt-4 font-display text-[15px] font-bold text-navy-900">{k.judul}</h2>
+            <p class="mt-1.5 text-[14px] leading-relaxed text-slate-600">{k.isi}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Formulir dan peta -->
+  <section class="bg-navy-50 py-16 sm:py-24">
+    <div class="wrap grid gap-10 lg:grid-cols-2">
+      <!-- Formulir -->
+      <div class="card p-8 sm:p-10" data-aos="fade-right">
+        <Judul judul="Kirim Pesan" keterangan="Isi formulir berikut dan tim kami akan menghubungi Anda kembali." />
+
+        <form id="form-kontak" class="mt-8 space-y-5" novalidate>
+          <div>
+            <label for="nama" class="mb-1.5 block text-[13.5px] font-semibold text-navy-800">
+              Nama Lengkap <span class="text-rose-600">*</span>
+            </label>
+            <input
+              id="nama"
+              name="nama"
+              type="text"
+              required
+              minlength="3"
+              placeholder="Masukkan nama lengkap Anda"
+              class="masukan w-full rounded-xl border border-slate-300 px-4 py-3 text-[15px] outline-none transition-colors focus:border-navy-600 focus:ring-4 focus:ring-navy-600/12"
+            />
+            <p class="pesan-error mt-1.5 hidden text-[12.5px] font-medium text-rose-600"></p>
+          </div>
+
+          <div>
+            <label for="email" class="mb-1.5 block text-[13.5px] font-semibold text-navy-800">
+              Alamat Surel <span class="text-rose-600">*</span>
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              placeholder="nama@contoh.com"
+              class="masukan w-full rounded-xl border border-slate-300 px-4 py-3 text-[15px] outline-none transition-colors focus:border-navy-600 focus:ring-4 focus:ring-navy-600/12"
+            />
+            <p class="pesan-error mt-1.5 hidden text-[12.5px] font-medium text-rose-600"></p>
+          </div>
+
+          <div>
+            <label for="subjek" class="mb-1.5 block text-[13.5px] font-semibold text-navy-800">
+              Keperluan <span class="text-rose-600">*</span>
+            </label>
+            <select
+              id="subjek"
+              name="subjek"
+              required
+              class="masukan w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-[15px] outline-none transition-colors focus:border-navy-600 focus:ring-4 focus:ring-navy-600/12"
+            >
+              <option value="">-- Pilih keperluan --</option>
+              <option>Informasi Pendaftaran</option>
+              <option>Kerja Sama Industri</option>
+              <option>Kunjungan Sekolah</option>
+              <option>Lainnya</option>
+            </select>
+            <p class="pesan-error mt-1.5 hidden text-[12.5px] font-medium text-rose-600"></p>
+          </div>
+
+          <div>
+            <label for="pesan" class="mb-1.5 block text-[13.5px] font-semibold text-navy-800">
+              Pesan <span class="text-rose-600">*</span>
+            </label>
+            <textarea
+              id="pesan"
+              name="pesan"
+              rows="5"
+              required
+              minlength="10"
+              placeholder="Tuliskan pesan Anda di sini..."
+              class="masukan w-full resize-y rounded-xl border border-slate-300 px-4 py-3 text-[15px] outline-none transition-colors focus:border-navy-600 focus:ring-4 focus:ring-navy-600/12"
+            ></textarea>
+            <p class="pesan-error mt-1.5 hidden text-[12.5px] font-medium text-rose-600"></p>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-full justify-center">
+            Kirim Pesan
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 2 11 13M22 2l-7 20-4-9-9-4z" />
+            </svg>
+          </button>
+
+          <p id="form-berhasil" class="hidden rounded-xl bg-emerald-50 px-4 py-3.5 text-[14px] font-medium text-emerald-800">
+            Terima kasih. Pesan Anda telah kami terima dan akan segera ditindaklanjuti.
+          </p>
+        </form>
+      </div>
+
+      <!-- Peta dan pertanyaan umum -->
+      <div class="space-y-8" data-aos="fade-left">
+        <div class="card overflow-hidden">
+          <div class="relative aspect-[4/3] bg-navy-100">
+            <div class="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center">
+              <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#1f4d8f" stroke-width="1.6">
+                <path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z" /><circle cx="12" cy="10" r="2.6" />
+              </svg>
+              <div>
+                <p class="font-display font-bold text-navy-900">{identitas.nama}</p>
+                <p class="mt-1 px-6 text-[13px] text-slate-600">
+                  {kontak.alamat}, Kec. {kontak.kecamatan}, {kontak.kabupaten}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="border-t border-slate-200 p-4 text-center text-[12.5px] text-slate-500">
+            Sematkan peta di sini bila diperlukan.
+          </div>
+        </div>
+
+        <div class="card p-7">
+          <h2 class="font-display text-lg font-bold text-navy-900">Pertanyaan yang Sering Diajukan</h2>
+
+          <div class="mt-5 divide-y divide-slate-100">
+            {
+              pertanyaanUmum.map((f) => (
+                <details class="faq group py-3.5">
+                  <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-[14.5px] font-semibold text-navy-800">
+                    {f.tanya}
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.4"
+                      stroke-linecap="round"
+                      class="shrink-0 text-navy-400 transition-transform duration-300 group-open:rotate-180"
+                    >
+                      <path d="m6 9 6 6 6-6" />
+                    </svg>
+                  </summary>
+                  <p class="mt-2.5 text-[14px] leading-relaxed text-slate-600">{f.jawab}</p>
+                </details>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  /**
+   * Validasi formulir kontak di sisi peramban.
+   *
+   * Aturan tiap kolom disimpan dalam satu objek agar mudah ditambah atau
+   * diubah. Fungsi `periksa` bekerja untuk semua kolom, sehingga tidak ada
+   * kode yang ditulis berulang untuk masing-masing masukan.
+   */
+  function siapkanFormKontak(): void {
+    const form = document.getElementById('form-kontak') as HTMLFormElement | null;
+    const pesanBerhasil = document.getElementById('form-berhasil');
+
+    if (!form || !pesanBerhasil) return;
+
+    /** Aturan validasi per nama kolom. */
+    const aturan: Record<string, (nilai: string) => string | null> = {
+      nama: (nilai) => {
+        if (nilai.trim() === '') return 'Nama lengkap wajib diisi.';
+        if (nilai.trim().length < 3) return 'Nama lengkap minimal 3 karakter.';
+        return null;
+      },
+      email: (nilai) => {
+        if (nilai.trim() === '') return 'Alamat surel wajib diisi.';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(nilai.trim())) return 'Format alamat surel tidak valid.';
+        return null;
+      },
+      subjek: (nilai) => (nilai === '' ? 'Keperluan wajib dipilih.' : null),
+      pesan: (nilai) => {
+        if (nilai.trim() === '') return 'Pesan wajib diisi.';
+        if (nilai.trim().length < 10) return 'Pesan minimal 10 karakter.';
+        return null;
+      },
+    };
+
+    /**
+     * Memeriksa satu kolom dan menampilkan pesan errornya bila ada.
+     *
+     * @param kolom Elemen masukan yang diperiksa.
+     * @returns `true` bila isinya valid.
+     */
+    function periksa(kolom: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement): boolean {
+      const uji = aturan[kolom.name];
+      if (!uji) return true;
+
+      const error = uji(kolom.value);
+      const wadahPesan = kolom.parentElement?.querySelector<HTMLElement>('.pesan-error');
+
+      if (wadahPesan) {
+        wadahPesan.textContent = error ?? '';
+        wadahPesan.classList.toggle('hidden', error === null);
+      }
+
+      kolom.classList.toggle('border-rose-500', error !== null);
+      kolom.classList.toggle('border-slate-300', error === null);
+
+      return error === null;
+    }
+
+    const semuaKolom = form.querySelectorAll<HTMLInputElement>('.masukan');
+
+    // Periksa ulang begitu pengguna selesai mengisi sebuah kolom.
+    semuaKolom.forEach((kolom) => {
+      kolom.addEventListener('blur', () => periksa(kolom));
+      kolom.addEventListener('input', () => {
+        if (kolom.classList.contains('border-rose-500')) periksa(kolom);
+      });
+    });
+
+    form.addEventListener('submit', (peristiwa) => {
+      peristiwa.preventDefault();
+
+      // Periksa seluruh kolom; jangan berhenti di kolom pertama yang salah,
+      // supaya pengguna melihat semua kesalahan sekaligus.
+      let valid = true;
+      semuaKolom.forEach((kolom) => {
+        if (!periksa(kolom)) valid = false;
+      });
+
+      if (!valid) {
+        form.querySelector<HTMLElement>('.border-rose-500')?.focus();
+        return;
+      }
+
+      form.reset();
+      pesanBerhasil!.classList.remove('hidden');
+      pesanBerhasil!.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      window.setTimeout(() => pesanBerhasil!.classList.add('hidden'), 6000);
+    });
+  }
+
+  siapkanFormKontak();
+  document.addEventListener('astro:page-load', siapkanFormKontak);
+</script>

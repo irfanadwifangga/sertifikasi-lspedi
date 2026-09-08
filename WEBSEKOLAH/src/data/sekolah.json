@@ -1,0 +1,119 @@
+{
+  "_keterangan": "SELURUH DATA PADA BERKAS INI ADALAH DATA FIKTIF, dibuat khusus sebagai bahan Tugas Praktik Demonstrasi. Nama sekolah, alamat, statistik, dan seluruh isinya tidak merujuk pada institusi mana pun yang benar-benar ada.",
+  "_caraMengganti": "Ubah nilai di berkas ini saja; seluruh halaman situs akan ikut menyesuaikan tanpa perlu menyentuh kode.",
+
+  "identitas": {
+    "nama": "SMK Wira Teknologi Nusantara",
+    "namaSingkat": "SMK Wira Teknologi",
+    "tagline": "Terampil, Berkarakter, Siap Kerja",
+    "npsn": "10800000",
+    "bentukPendidikan": "SMK",
+    "statusSekolah": "Swasta",
+    "akreditasi": "A",
+    "tahunBerdiri": 1996,
+    "yayasan": "Yayasan Wira Teknologi Nusantara",
+    "kurikulum": "Kurikulum Merdeka - Bidang Teknologi Otomotif",
+    "penyelenggaraan": "Sehari Penuh / 6 hari",
+    "semesterData": "2026/2027 Gasal"
+  },
+
+  "kontak": {
+    "alamat": "Jl. Raya Pendidikan No. 96",
+    "kelurahan": "Sukamenanti",
+    "kecamatan": "Bukit Kemuning",
+    "kabupaten": "Lampung Utara",
+    "provinsi": "Lampung",
+    "kodePos": "34556",
+    "telepon": "(0724) 951-0203",
+    "email": "info@smkwirateknologi.sch.id",
+    "instagram": "@smkwirateknologi",
+    "jamOperasional": "Senin - Sabtu, 07.00 - 15.30 WIB"
+  },
+
+  "statistik": {
+    "guru": 42,
+    "tenagaKependidikan": 11,
+    "siswaLakiLaki": 512,
+    "siswaPerempuan": 386,
+    "rombonganBelajar": 27,
+    "ruangKelas": 27,
+    "laboratorium": 6,
+    "perpustakaan": 1,
+    "luasTanah": "12.400 m²"
+  },
+
+  "mutu": {
+    "rasioSiswaRombel": 33,
+    "rasioSiswaGuru": 21,
+    "persentaseGuruKualifikasi": 95.2,
+    "persentaseGuruSertifikasi": 83.3,
+    "persentaseLulusanBekerja": 78.5,
+    "mitraIndustri": 24
+  },
+
+  "sarana": {
+    "aksesInternet": "Fiber Optic 100 Mbps",
+    "sumberListrik": "PLN",
+    "dayaListrik": "23.000 VA"
+  },
+
+  "visi": "Menjadi sekolah menengah kejuruan rujukan di Provinsi Lampung yang menghasilkan lulusan berakhlak mulia, kompeten di bidang teknologi, dan mampu bersaing di dunia industri maupun berwirausaha secara mandiri.",
+
+  "misi": [
+    "Menyelenggarakan pembelajaran yang menumbuhkan keimanan, ketakwaan, dan akhlak mulia peserta didik.",
+    "Membekali peserta didik dengan kompetensi teknis sesuai standar dunia usaha dan dunia industri.",
+    "Menjalin kemitraan strategis dengan industri sebagai mitra praktik kerja lapangan dan penyaluran lulusan.",
+    "Mengembangkan budaya disiplin, kerja sama, dan tanggung jawab dalam seluruh kegiatan sekolah.",
+    "Meningkatkan mutu pendidik melalui pelatihan, magang industri, dan sertifikasi kompetensi berkelanjutan.",
+    "Menumbuhkan jiwa kewirausahaan melalui unit produksi dan teaching factory."
+  ],
+
+  "sambutan": {
+    "nama": "Drs. H. Bambang Setiawan, M.Pd.",
+    "jabatan": "Kepala Sekolah",
+    "foto": "/img/kepala-sekolah.svg",
+    "pesan": "Selamat datang di laman resmi SMK Wira Teknologi Nusantara. Sejak berdiri pada tahun 1996, kami berkomitmen menyiapkan lulusan yang tidak hanya terampil secara teknis, tetapi juga berkarakter kuat dan siap menghadapi tantangan dunia kerja. Melalui kemitraan dengan 24 industri, peserta didik kami memperoleh pengalaman nyata sejak di bangku sekolah."
+  },
+
+  "sejarah": [
+    { "tahun": 1996, "peristiwa": "Sekolah didirikan oleh Yayasan Wira Teknologi Nusantara dengan satu program keahlian." },
+    { "tahun": 2004, "peristiwa": "Pembukaan program keahlian Teknik dan Bisnis Sepeda Motor." },
+    { "tahun": 2012, "peristiwa": "Memperoleh akreditasi A untuk seluruh program keahlian." },
+    { "tahun": 2019, "peristiwa": "Peresmian teaching factory bidang otomotif hasil kerja sama dengan industri." },
+    { "tahun": 2024, "peristiwa": "Penerapan penuh Kurikulum Merdeka dan pembukaan program Teknik Elektronika Industri." }
+  ],
+
+  "programKeahlian": [
+    {
+      "nama": "Teknik Kendaraan Ringan Otomotif",
+      "singkatan": "TKRO",
+      "ikon": "wrench",
+      "warna": "blue",
+      "rombel": 10,
+      "deskripsi": "Kompetensi perawatan dan perbaikan mesin, sistem kelistrikan, pemindah tenaga, serta chasis kendaraan ringan."
+    },
+    {
+      "nama": "Teknik dan Bisnis Sepeda Motor",
+      "singkatan": "TBSM",
+      "ikon": "bike",
+      "warna": "orange",
+      "rombel": 9,
+      "deskripsi": "Kompetensi servis berkala, diagnosis kerusakan, pengelolaan bengkel, serta layanan pelanggan sepeda motor."
+    },
+    {
+      "nama": "Teknik Elektronika Industri",
+      "singkatan": "TEI",
+      "ikon": "chip",
+      "warna": "violet",
+      "rombel": 8,
+      "deskripsi": "Kompetensi perakitan, pemrograman, dan perawatan sistem kendali elektronika pada peralatan industri."
+    }
+  ],
+
+  "prestasi": [
+    { "tahun": 2026, "judul": "Juara II Lomba Kompetensi Siswa Bidang Automobile Technology", "tingkat": "Provinsi" },
+    { "tahun": 2025, "judul": "Juara I Kompetisi Teaching Factory Antar-SMK", "tingkat": "Provinsi" },
+    { "tahun": 2025, "judul": "Juara III Lomba Robotik Pelajar", "tingkat": "Kabupaten" },
+    { "tahun": 2024, "judul": "Sekolah Adiwiyata Tingkat Kabupaten", "tingkat": "Kabupaten" }
+  ]
+}

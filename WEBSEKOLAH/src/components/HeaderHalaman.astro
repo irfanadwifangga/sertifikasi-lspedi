@@ -1,0 +1,37 @@
+---
+/**
+ * HeaderHalaman — kepala halaman untuk seluruh halaman selain Beranda.
+ *
+ * Menampilkan judul halaman beserta remah roti (breadcrumb) agar pengunjung
+ * selalu tahu posisinya. Dibuat satu komponen supaya tampilannya seragam.
+ */
+interface Props {
+  judul: string;
+  keterangan?: string;
+  /** Nama halaman saat ini pada remah roti. */
+  remah: string;
+}
+
+const { judul, keterangan, remah } = Astro.props;
+---
+
+<section class="relative overflow-hidden bg-navy-900 pb-14 pt-28 sm:pb-20 sm:pt-36">
+  <div class="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-amber-brand/10"></div>
+  <div class="pointer-events-none absolute -bottom-40 -left-24 h-80 w-80 rounded-full bg-white/5"></div>
+
+  <div class="wrap relative">
+    <nav aria-label="Remah roti" class="flex items-center gap-2 text-[13px] text-navy-200">
+      <a href="/" class="transition-colors hover:text-amber-brand">Beranda</a>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <path d="m9 6 6 6-6 6" />
+      </svg>
+      <span class="font-semibold text-white">{remah}</span>
+    </nav>
+
+    <h1 class="rule mt-4 font-display text-4xl font-extrabold text-white sm:text-5xl">
+      {judul}
+    </h1>
+
+    {keterangan && <p class="mt-5 max-w-2xl text-[15.5px] leading-relaxed text-navy-200">{keterangan}</p>}
+  </div>
+</section>

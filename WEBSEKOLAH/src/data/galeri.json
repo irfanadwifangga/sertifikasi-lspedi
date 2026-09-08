@@ -1,0 +1,11 @@
+[
+  { "berkas": "/img/galeri-bengkel.svg",   "judul": "Praktik di Bengkel TKRO",        "kategori": "Praktik" },
+  { "berkas": "/img/galeri-motor.svg",     "judul": "Praktik Servis Sepeda Motor",    "kategori": "Praktik" },
+  { "berkas": "/img/galeri-upacara.svg",   "judul": "Upacara Bendera Hari Senin",     "kategori": "Kegiatan" },
+  { "berkas": "/img/galeri-lks.svg",       "judul": "Lomba Kompetensi Siswa",         "kategori": "Prestasi" },
+  { "berkas": "/img/galeri-perpus.svg",    "judul": "Suasana Perpustakaan Sekolah",   "kategori": "Fasilitas" },
+  { "berkas": "/img/galeri-kelas.svg",     "judul": "Kegiatan Belajar di Kelas",      "kategori": "Kegiatan" },
+  { "berkas": "/img/galeri-futsal.svg",    "judul": "Ekstrakurikuler Futsal",         "kategori": "Ekstrakurikuler" },
+  { "berkas": "/img/galeri-pramuka.svg",   "judul": "Perkemahan Pramuka",             "kategori": "Ekstrakurikuler" },
+  { "berkas": "/img/galeri-baksos.svg",    "judul": "Bakti Sosial Servis Gratis",     "kategori": "Pengabdian" }
+]
