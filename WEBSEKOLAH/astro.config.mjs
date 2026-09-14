@@ -1,6 +1,6 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
-import tailwindcss from '@tailwindcss/vite';
+import { defineConfig } from "astro/config";
+import tailwindcss from "@tailwindcss/vite";
 
 /**
  * Konfigurasi Astro untuk situs SMKS YP 96 Bukit Kemuning.
@@ -10,8 +10,8 @@ import tailwindcss from '@tailwindcss/vite';
  * ketentuan "setiap menu utama memiliki halaman tersendiri" pada soal.
  */
 export default defineConfig({
-  site: 'https://smkyp96bukitkemuning.sch.id',
+  site: "https://smk-wira-teknologi.vercel.app/",
   vite: {
-    plugins: [tailwindcss()],
-  },
+    plugins: [tailwindcss()]
+  }
 });
